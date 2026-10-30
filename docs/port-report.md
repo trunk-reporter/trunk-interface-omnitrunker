@@ -16,7 +16,7 @@ connection through `/api/client.js`.
 | `audio-engine.js` + PCM WebSocket | `LivePlayer` + `rec.listen()`. LISTEN click → `player.resume()` then `rec.listen(filter)`: `{ system }` when exactly one system is selected, else everything. Each chunk is dropped when its system is filtered out or its `"shortName:tg"` is muted, else `player.play(chunk)`. Stop → `rec.listen(false)` + `player.stop()`. Row glow / "N active" come from chunks of the call the player is actually playing. The system filter now re-sends `listen` (in tr-engine that call sat behind `typeof engine`, which was never visible from that script, so it never ran). |
 | master volume | 0–100 → gain `2.5 × v / 100` (80, the default, is the player's own 2). See Concerns: LivePlayer has no `gain` property. |
 | per-talkgroup mute | Unchanged model (`mutedTGs`, composite keys, the drawer list, Unmute all / Mute all, speaker icons). A talkgroup not in the talkgroup file can now be muted from its row (its own key); before, the speaker click did nothing for those. |
-| auto-pan | LivePlayer has no pan: the Pan checkbox, the settings toggle and the L/R column are gone (the brief: leave the checkbox out). |
+| auto-pan | Round 1: LivePlayer had no pan, so it was left out. Round 3: back, on LivePlayer's `pan` / `setPan` (see "Round 3"). |
 | `auth.js`, `card-*` meta, "— tr-engine" title, Google Fonts | Removed. Title "OmniTrunker"; the theme header's title/subtitle come from `THEME_ENGINE_OPTIONS`. |
 | `theme-config.js` | Copied as is (no fetches, no URLs). |
 | `theme-engine.js` | Copied, minus its two tr-engine fetches: the nav page list (`/api/v1/pages`; now "no other pages") and the update badge (`/api/v1/health`); default subtitle "Trunk Recorder Pro". |
@@ -181,3 +181,64 @@ is module-scoped and not reachable from the console. The greeting carried 200 `m
 shared a time with another. The feed had 66 rows of those kinds, so they matched. Then I closed
 the socket. The page reconnected (a second `hello`), and the feed still had the same number of
 those rows (67 before, 67 after), so nothing was replayed twice.
+
+## Round 3
+
+Three changes (interface version 0.2.0), each against the live recorder (`marcs`, three sites).
+The recorder was restarted once by the controller during the round, to serve a client.js whose
+`LivePlayer` takes `context`; the audio checks below ran after that restart.
+
+**What changed**
+
+- **Site column** in Active Voice Channels, after System: `CallView.site`, then a muted ` +N`
+  when the call is also heard on other sites (`CallView.alsoOn`, new `also_on` in `callToData`),
+  the list in the cell's title ("also on 004 Hamilton County"). A Site toggle in the drawer.
+- **The `activity` topic.** `rec.subscribe(['activity'])` once after `rec` is made (client.js
+  resends it on reconnect). `unitAffiliated` makes an AFFILIATION row. `unitActive` and
+  `tgActive` were taken out of `FEED_KINDS`: they repeat the GRANT rows made from each call's
+  `sources[]`, which carry the frequency, alpha tag and site. `callVolume` makes no row.
+- **Several calls at once, panned.** One `LivePlayer` per call on the air (`followCall: false`),
+  all mixing into one `AudioContext` made on the LISTEN click and closed on LISTEN off. A player
+  is stopped and dropped when its call leaves `liveCalls`, when its talkgroup is muted (speaker
+  icon, drawer list, Mute all) or its system filtered out, and as a safety net after 5 s with
+  `nowPlaying` null. Master volume → `setGain` on every player (the `_gain` poke is gone).
+  Auto-pan (default on): tr-engine's spot from the talkgroup,
+  `-0.8 + (((tg * 2654435761) >>> 0) % 10000 / 10000) * 1.6`, else 0; toggling re-pans every
+  player and every row's dot. The toolbar Pan checkbox and the drawer's Auto-pan row are kept in
+  step; `autoPan: false` is saved in `omni-settings` when off. The L/R column (child 2) shows the
+  dot at `((pan + 1) / 2) * 29` px, with its own toggle. The status reads "N playing" (players
+  with `nowPlaying` set). `window._omniAudio` keeps `isMuted`, `toggleMute`,
+  `onSystemFilterChange` and gains `debug()`.
+- Columns are now: speaker, L/R, System, Site, Channel, TG, Alpha Tag, Source, Unit Alias,
+  Elapsed, Mode, Encryption. The `.hide-col-*` and phone-width `nth-child` rules follow (phone
+  width still hides Speaker, Mode and Encryption).
+
+**What the feed shows now:** GRANT (a radio talking on a call), CALL END, AFFILIATION, NEW UNIT,
+NEW TG, TONES. The "Mixing and stereo pan" and "never arrive" limits above no longer hold.
+
+**How it was tested** (Claude in Chrome, `http://127.0.0.1:8083/`):
+
+- Site: rows showed `001 Butler County Simulcast`, `004 Hamilton County Simulcast` and
+  `013 Warren Co Simulcast` within seconds (before the restart; after it, the recorder names
+  them `001 Butler County`, `004 Hamilton County`, `013 Warren County`). Before the restart no
+  call carried `alsoOn` (58 `status` messages read on a second connection); after it, rows showed
+  e.g. `001 Butler County +1` titled "also on 004 Hamilton County", the suffix grey
+  (`--text-muted`). Each column toggle hides exactly its own header.
+- Activity: a second connection subscribed to `activity` got `subscribed: ["activity"]` and in
+  45 s 42 `unitActive`, 45 `tgActive`, 5 `unitAffiliated`, 1 `callVolume`. The page's feed then
+  held 10 AFFILIATION rows, no UNIT ACTIVE rows, 93 GRANT, 56 CALL END, and no two identical
+  consecutive rows; the type filter listed Affiliation.
+- Audio, after a real click on LISTEN: within 6 s, 3 players, all on the shared context
+  (`running`), pans -0.392 / 0.790 / -0.553, status "3 playing". Over 38 s: up to 11 players at
+  once, 42 calls played, 14 distinct pans, every pan equal to the formula, no player for a call
+  not on the air (checked against `status` on a second connection), 32 players dropped, each
+  when its call ended. All 16 row dots at the formula's position. Volume 40 → every player's
+  gain 1 (80 → 2). Pan off → every player and dot at 0 / 14.5 px, drawer toggle unticked,
+  `autoPan: false` saved, kept after a reload; on again → 10 distinct pans. Muting a playing
+  talkgroup (55649) dropped its player at once, none came back in 5 s; unmuted after. LISTEN
+  off → no players, context closed, status `--`. FREQ view rows have the same 12 cells.
+- No console errors; every request went to `127.0.0.1:8083`.
+
+Not tested: the fallback for a client.js without `context` (each player making its own
+`AudioContext`): the restart came before the audio work was ready. The sound itself was not
+heard by a person.

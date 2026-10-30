@@ -8,17 +8,25 @@ with the same look, layout, behaviour and themes, fed by the recorder's own API.
 
 ## What it shows
 
-- **Active Voice Channels** (top): every call on the air now, with its system, frequency,
-  talkgroup and alpha tag, the radio talking and its name, how long it has been going, the voice
+- **Active Voice Channels** (top): every call on the air now, with its system, site,
+  frequency, talkgroup and alpha tag, the radio talking and its name, how long it has been going, the voice
   mode (FDMA, TDMA, analog, NXDN) and whether it is encrypted. Emergencies have a red edge.
   **TG** shows one row per talkgroup; **FREQ** one row per frequency, which stays (dimmed) when
   the call ends.
+- **Site** column: the site the call is saved from, then a grey `+N` when the recorder also hears
+  it on other sites (hover for their names).
+- **L/R** column: where the talkgroup sits in the stereo field when you listen.
 - **Unit Activity** (bottom): a feed of what happens, newest first. A **GRANT** row for each
   radio that talks on a call, a **CALL END** row when a call ends, and the recorder's notable
-  events about radios and talkgroups: **NEW UNIT** and **NEW TG** (heard for the first time) and
-  **TONES** (a tone pattern). Filter it by type (the types seen so far) and by system; set how
+  events about radios and talkgroups: **NEW UNIT** and **NEW TG** (heard for the first time),
+  **AFFILIATION** and **TONES** (a tone pattern).
+- **Activity topic:** the page subscribes to the recorder's `activity` topic for affiliations; its
+  per-talker and per-call kinds are left out, as the GRANT rows already show them. Filter it by type (the types seen so far) and by system; set how
   many rows it keeps.
-- **LISTEN** plays the calls live, one at a time, in your browser. The speaker icon on a row mutes
+- **LISTEN** plays the calls live in your browser, every call on the air at once.
+- **Auto-pan** (the **Pan** checkbox beside the volume, and in the settings drawer; on by default)
+  spreads the talkgroups across the stereo field, each always at its own spot, so overlapping
+  calls can be told apart. The speaker icon on a row mutes
   that talkgroup; the settings drawer (the gear) has the whole talkgroup list to search, mute and
   unmute, the master volume, and which columns to show.
 - The theme picker at the top right switches between the themes (Ctrl+Shift+T cycles them).
