@@ -1169,6 +1169,9 @@ const clearBtn = document.getElementById('clear-btn');
 // ── State ──
 // The connection to the recorder serving this page (it reconnects by itself).
 const rec = new TrunkClient();
+// The frequent monitorEvent kinds (affiliations among them) come only to a connection that asks
+// for the topic `activity`; client.js sends this again on every reconnect.
+rec.subscribe(['activity']);
 let totalCount = 0;
 let eventCountDirty = false;
 let everConnected = false;
@@ -1243,8 +1246,9 @@ function matchesSystemFilter(data) {
 
 // ── Event type to badge mapping ──
 // Rows come from the calls on the air ('call': a talker on a call, 'call_end') and from the
-// recorder's monitorEvent kinds (unitFirstSeen, unitActive, unitAffiliated, tgFirstSeen, tgActive,
-// tonePattern). The older tr-engine types stay mapped below; nothing sends them now.
+// recorder's monitorEvent kinds (unitFirstSeen, unitAffiliated, tgFirstSeen, tonePattern; see
+// FEED_KINDS). The older tr-engine types, and unitActive / tgActive, stay mapped below; they are
+// not shown now.
 function getBadgeInfo(eventType) {
   switch (eventType) {
     case 'call':
@@ -2047,9 +2051,13 @@ function syncCalls() {
   }
 }
 
-// The recorder's notable events that are about radios and talkgroups. (The recorder
-// does not send raw registrations, affiliations or acknowledgements to interfaces.)
-const FEED_KINDS = { unitFirstSeen: true, unitActive: true, unitAffiliated: true, tgFirstSeen: true, tgActive: true, tonePattern: true };
+// The recorder's events about radios and talkgroups that make feed rows. The frequent kinds
+// come because the page subscribes to `activity`: unitAffiliated makes a row; unitActive (a
+// new talker on a call) and tgActive (a call's start, with its units) are left out, as the GRANT
+// rows from each call's sources[] say the same with the frequency, alpha tag and site; callVolume
+// is a per-minute figure, not a radio event. (Raw registrations and acknowledgements are not
+// sent to interfaces.)
+const FEED_KINDS = { unitFirstSeen: true, unitAffiliated: true, tgFirstSeen: true, tonePattern: true };
 
 // The newest event time taken: a reconnect's greeting replays the recent events, and
 // those at or before it were shown already. The cut-off is taken once, when the connection
@@ -2075,12 +2083,6 @@ function onMonitorEvent(m) {
     time: m.t ? m.t * 1000 : Date.now(),
   };
   if (m.kind === 'tonePattern') base.tg_alpha_tag = m.text || base.tg_alpha_tag;
-  if (m.kind === 'tgActive' && m.units && m.units.length) {
-    m.units.forEach(function(u) {
-      addActivityRow(m.kind, Object.assign({}, base, { unit: u, unit_alpha_tag: rec.unitName(sys, u) }));
-    });
-    return;
-  }
   var unit = m.unit != null ? m.unit : '';
   var alias = m.alias || (m.unit != null ? rec.unitName(sys, m.unit) : '');
   addActivityRow(m.kind, Object.assign({}, base, { unit: unit, unit_alpha_tag: alias }));

@@ -12,7 +12,7 @@ connection through `/api/client.js`.
 | `GET /api/v1/systems` | `rec.config.systems` + `rec.config.conventional` on each `config` message (`loadSystems`): short name is the system's id everywhere in the page (filter values, mute keys, `data.system_id`); `name` (else the short name) is what is shown. Calls and audio chunks name their system by number; `CallView.systemName` / `systemName(rec.status, n)` turn it into the short name. |
 | `GET /api/v1/talkgroups?limit=5000` | `rec.talkgroups(shortName)` for every system, rebuilt on `config`, `talkgroups` and `talkgroupEdited` (`loadTalkgroups`) into the same `tgCache` (`"shortName:tg"` → `{ alpha_tag, description, group, tag }`). Note: client.js returns the category as `group`, not `category`. |
 | SSE `call_start` / `call_end` | `syncCalls()` on every `status` (and `state`): the calls in `rec.calls` are diffed by `CallView.id` against the last set. New → `addActiveChannel` + a feed row; gone → `removeActiveChannel` + a CALL END row; changed (talker, alias, alpha tag, encrypted, emergency, frequency, mode) → the row is re-rendered. `callToData()` turns a `CallView` into the field names the renderers already read, so `buildChannelCells`, `renderChannelRow`, `buildActivityRow`, `addActiveChannel(FreqMode)`, `removeActiveChannel(FreqMode)`, `switchViewMode` are unchanged apart from the pan column. Elapsed: wall-clock start = now − (`status.nowS` − `startS`), fixed when the call is first seen; `parseStartTimeMs` takes that number. |
-| SSE `unit_event` | `monitorEvent` messages of kinds `unitFirstSeen`, `unitActive`, `unitAffiliated`, `tgFirstSeen`, `tgActive`, `tonePattern` (`onMonitorEvent`), plus a GRANT row for each radio in a call's `sources[]` as it first appears. Badges: GRANT (talker / `tgActive`), UNIT ACTIVE, AFFILIATION, NEW UNIT, NEW TG, TONES (the pattern's `text` in the TG Alpha column), CALL END. The type filter starts empty and gains a type the first time a row of it arrives; a saved filter is applied as types appear (`ensureTypeItem`, `_pendingTypeFilter`; "all" is saved as `null`). |
+| SSE `unit_event` | `monitorEvent` messages of kinds `unitFirstSeen`, `unitAffiliated`, `tgFirstSeen`, `tonePattern` (`onMonitorEvent`, `FEED_KINDS`; the page subscribes to the topic `activity` for `unitAffiliated`), plus a GRANT row for each radio in a call's `sources[]` as it first appears. Badges: GRANT (talker), AFFILIATION, NEW UNIT, NEW TG, TONES (the pattern's `text` in the TG Alpha column), CALL END. The type filter starts empty and gains a type the first time a row of it arrives; a saved filter is applied as types appear (`ensureTypeItem`, `_pendingTypeFilter`; "all" is saved as `null`). |
 | `audio-engine.js` + PCM WebSocket | `LivePlayer` + `rec.listen()`. LISTEN click → `player.resume()` then `rec.listen(filter)`: `{ system }` when exactly one system is selected, else everything. Each chunk is dropped when its system is filtered out or its `"shortName:tg"` is muted, else `player.play(chunk)`. Stop → `rec.listen(false)` + `player.stop()`. Row glow / "N active" come from chunks of the call the player is actually playing. The system filter now re-sends `listen` (in tr-engine that call sat behind `typeof engine`, which was never visible from that script, so it never ran). |
 | master volume | 0–100 → gain `2.5 × v / 100` (80, the default, is the player's own 2). See Concerns: LivePlayer has no `gain` property. |
 | per-talkgroup mute | Unchanged model (`mutedTGs`, composite keys, the drawer list, Unmute all / Mute all, speaker icons). A talkgroup not in the talkgroup file can now be muted from its row (its own key); before, the speaker click did nothing for those. |
@@ -29,22 +29,24 @@ Before: every control-channel unit event tr-engine decoded (registration, deregi
 affiliation, acknowledge, data grant, location, call alert) plus a GRANT per call start and a
 CALL END per call end.
 
-Now: a GRANT per radio that talks on a call (from `sources[]`), a CALL END per call end, NEW UNIT
-and NEW TG as the recorder first hears them (plus the recent ones it replays on connecting), and
-TONES. On the live `marcs` system the feed was mostly GRANT and CALL END, with NEW UNIT / NEW TG
-interleaved.
+Now: a GRANT per radio that talks on a call (from `sources[]`), a CALL END per call end, an
+AFFILIATION per `unitAffiliated` (round 3: the page subscribes to the recorder's `activity` topic),
+NEW UNIT and NEW TG as the recorder first hears them (plus the recent ones it replays on
+connecting), and TONES. The other `activity` kinds make no rows: `unitActive` (a new talker on a
+call) and `tgActive` (a call's start, with its units) say what the GRANT rows from `sources[]`
+already say, and those carry the frequency, alpha tag and site; `callVolume` is a per-minute
+figure. On the live `marcs` system the feed is mostly GRANT and CALL END, with AFFILIATION (about
+7 a minute) and NEW UNIT / NEW TG interleaved.
 
 ## What could not be carried over, and why
 
-- **Raw unit events.** The interface API does not carry registrations, affiliations, acks, data
-  grants, locations or call alerts. Those badge types are gone from the filter (their mappings
+- **Raw unit events.** The interface API does not carry registrations, acks, data grants,
+  locations or call alerts (affiliations come with the `activity` topic, round 3). Those badge types are gone from the filter (their mappings
   stay in `getBadgeInfo`, unused).
-- **`unitActive`, `unitAffiliated`, `tgActive`, `callVolume` never arrive.** The brief maps them,
-  and the page handles them, but the recorder builds these "frequent" kinds only for its internal
-  watchers and does not send them as `monitorEvent` (`crates/trunk-app/src/stats/events.rs`:
-  `MonitorEvent::frequent()`; `Monitor::emit` returns no message for them). `tonePattern` comes
-  only for a system's own signals. So in practice the recorder's events in the feed are NEW UNIT,
-  NEW TG and TONES; per-talker GRANT rows stand in for unit activity.
+- **`unitActive`, `unitAffiliated`, `tgActive`, `callVolume` did not arrive** in round 1: the
+  recorder then built these "frequent" kinds only for its internal watchers. It now sends them to
+  a connection subscribed to the topic `activity`, and the page subscribes (round 3; see "The feed
+  now versus before" for which make rows). `tonePattern` comes only for a system's own signals.
 - **Mixing and stereo pan.** tr-engine's engine mixed several talkgroups at once and panned them.
   LivePlayer plays one call at a time (the first heard until quiet for 1.5 s; overlapping calls are
   skipped) and is mono. Pan is gone; overlapping calls are not heard together.
