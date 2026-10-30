@@ -1,0 +1,10 @@
+{
+  "id": "omnitrunker",
+  "name": "OmniTrunker",
+  "version": "0.1.0",
+  "description": "Live voice channels and unit activity, dispatch-wall style, with per-talkgroup listening.",
+  "api": 1,
+  "access": "listen",
+  "license": "MIT",
+  "repository": "https://github.com/trunk-reporter/trunk-interface-omnitrunker"
+}
