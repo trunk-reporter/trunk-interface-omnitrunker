@@ -3,15 +3,17 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<script src="auth.js?v=1"></script>
-<meta name="card-title" content="OmniTrunker">
-<meta name="card-description" content="Live voice channels and unit activity feed">
-<meta name="card-order" content="3">
-<title>OmniTrunker — tr-engine</title>
+<title>OmniTrunker</title>
 
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=DM+Sans:wght@300;400;500;700&family=Outfit:wght@200;300;400;500;600;700;800;900&family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,600;1,9..144,300&family=IBM+Plex+Mono:wght@300;400;500;600;700&family=Space+Mono:wght@400;700&family=JetBrains+Mono:wght@300;400;500;600;700;800&family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=Karla:wght@200;300;400;500&family=Syne:wght@400;500;600;700;800&family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=Inter:wght@300;400;500;600;700;800&family=Roboto:wght@300;400;500;700&family=Roboto+Mono:wght@400;500;700&family=VT323&family=Share+Tech+Mono&family=Press+Start+2P&display=swap" rel="stylesheet">
-
+<!-- Nothing is loaded from the internet (a recorder may be offline): the themes'
+     font stacks name their fonts and fall back to the computer's own. -->
+<script>
+  window.THEME_ENGINE_OPTIONS = {
+    pageTitle: 'OmniTrunker',
+    pageSubtitle: 'Live voice channels and unit activity',
+    homeHref: './',
+  };
+</script>
 <script src="theme-config.js"></script>
 
 <style>
@@ -210,16 +212,15 @@
 
   /* ── Channel table column widths ── */
   #channels-table th:nth-child(1), #channels-table td:nth-child(1) { width: 4%; text-align: center; overflow: visible; }
-  #channels-table th:nth-child(2), #channels-table td:nth-child(2) { width: 4%; text-align: center; overflow: visible; }
-  #channels-table th:nth-child(3), #channels-table td:nth-child(3) { width: 12%; }
-  #channels-table th:nth-child(4), #channels-table td:nth-child(4) { width: 8%; }
-  #channels-table th:nth-child(5), #channels-table td:nth-child(5) { width: 6%; }
-  #channels-table th:nth-child(6), #channels-table td:nth-child(6) { width: 17%; }
-  #channels-table th:nth-child(7), #channels-table td:nth-child(7) { width: 7%; }
-  #channels-table th:nth-child(8), #channels-table td:nth-child(8) { width: 14%; }
-  #channels-table th:nth-child(9), #channels-table td:nth-child(9) { width: 6%; }
-  #channels-table th:nth-child(10), #channels-table td:nth-child(10) { width: 7%; }
-  #channels-table th:nth-child(11), #channels-table td:nth-child(11) { width: 9%; }
+  #channels-table th:nth-child(2), #channels-table td:nth-child(2) { width: 12%; }
+  #channels-table th:nth-child(3), #channels-table td:nth-child(3) { width: 8%; }
+  #channels-table th:nth-child(4), #channels-table td:nth-child(4) { width: 6%; }
+  #channels-table th:nth-child(5), #channels-table td:nth-child(5) { width: 21%; }
+  #channels-table th:nth-child(6), #channels-table td:nth-child(6) { width: 7%; }
+  #channels-table th:nth-child(7), #channels-table td:nth-child(7) { width: 14%; }
+  #channels-table th:nth-child(8), #channels-table td:nth-child(8) { width: 6%; }
+  #channels-table th:nth-child(9), #channels-table td:nth-child(9) { width: 7%; }
+  #channels-table th:nth-child(10), #channels-table td:nth-child(10) { width: 9%; }
 
   /* ── Activity table column widths ── */
   #activity-table th:nth-child(1), #activity-table td:nth-child(1) { width: 8%; }
@@ -383,32 +384,6 @@
     position: absolute; right: -5px; bottom: -4px;
     font-size: 9px; line-height: 1;
     filter: drop-shadow(0 0 1px var(--bg-tile));
-  }
-
-  /* ── Pan Indicator ── */
-  .pan-indicator {
-    display: inline-block;
-    width: 33px; height: 6px;
-    background: var(--surface);
-    border: 1px solid var(--border);
-    border-radius: 4px;
-    position: relative;
-    vertical-align: middle;
-  }
-  .pan-indicator .pan-dot {
-    position: absolute;
-    top: 0px;
-    width: 4px; height: 4px;
-    background: var(--accent);
-    border-radius: 50%;
-    transition: left 0.2s ease;
-  }
-  .pan-indicator .pan-center {
-    position: absolute;
-    top: 0; bottom: 0;
-    left: 50%;
-    width: 1px;
-    background: var(--border);
   }
 
   /* ── Audio Glow on Active Rows ── */
@@ -646,11 +621,11 @@
   .tg-count { font-size: 11px; color: var(--text-faint); margin-bottom: 6px; }
 
   /* ── Column Visibility ── */
-  .hide-col-channel #channels-table th:nth-child(4), .hide-col-channel #channels-table td:nth-child(4) { display: none; }
-  .hide-col-source #channels-table th:nth-child(7), .hide-col-source #channels-table td:nth-child(7) { display: none; }
-  .hide-col-unit-alias #channels-table th:nth-child(8), .hide-col-unit-alias #channels-table td:nth-child(8) { display: none; }
-  .hide-col-mode #channels-table th:nth-child(10), .hide-col-mode #channels-table td:nth-child(10) { display: none; }
-  .hide-col-encryption #channels-table th:nth-child(11), .hide-col-encryption #channels-table td:nth-child(11) { display: none; }
+  .hide-col-channel #channels-table th:nth-child(3), .hide-col-channel #channels-table td:nth-child(3) { display: none; }
+  .hide-col-source #channels-table th:nth-child(6), .hide-col-source #channels-table td:nth-child(6) { display: none; }
+  .hide-col-unit-alias #channels-table th:nth-child(7), .hide-col-unit-alias #channels-table td:nth-child(7) { display: none; }
+  .hide-col-mode #channels-table th:nth-child(9), .hide-col-mode #channels-table td:nth-child(9) { display: none; }
+  .hide-col-encryption #channels-table th:nth-child(10), .hide-col-encryption #channels-table td:nth-child(10) { display: none; }
 
   /* ── Volume slider in settings ── */
   .settings-vol-slider {
@@ -808,14 +783,11 @@
   </button>
   <div class="audio-controls" id="audio-controls">
     <input type="range" class="vol-slider" id="master-vol" min="0" max="100" value="80" title="Volume">
-    <label style="font-size:10px;color:var(--text-muted);display:flex;align-items:center;gap:3px;cursor:pointer" title="Auto-spread channels across stereo field">
-      <input type="checkbox" id="auto-pan-toggle" checked style="margin:0"> Pan
-    </label>
     <span class="audio-status" id="audio-status">--</span>
   </div>
   <button class="gear-btn" id="settings-btn" title="Settings">&#9881;</button>
   <div class="stats"><span id="event-count">0</span> events</div>
-  <div class="stats" style="opacity:0.6;font-size:10px;color:var(--text-muted)" title="Page version">v16</div>
+  <div class="stats" style="opacity:0.6;font-size:10px;color:var(--text-muted)" title="Interface version">v0.1.0</div>
 </div>
 
 <div class="panels">
@@ -827,7 +799,6 @@
         <thead>
           <tr>
             <th title="Audio"></th>
-            <th title="Pan">L/R</th>
             <th>System</th>
             <th>Channel</th>
             <th>TG</th>
@@ -840,7 +811,7 @@
           </tr>
         </thead>
         <tbody id="channels-body">
-          <tr id="channels-empty"><td colspan="11" class="empty-state">Waiting for active calls...</td></tr>
+          <tr id="channels-empty"><td colspan="10" class="empty-state">Waiting for active calls...</td></tr>
         </tbody>
       </table>
     </div>
@@ -906,17 +877,6 @@
         <div class="settings-label">Master Volume</div>
         <input type="range" class="settings-vol-slider" id="set-volume" min="0" max="100" value="80">
       </div>
-      <div class="settings-row">
-        <div>
-          <div class="settings-label">Auto-pan</div>
-          <div class="settings-sublabel">Spread channels across stereo field</div>
-        </div>
-        <label class="toggle">
-          <input type="checkbox" id="set-auto-pan" checked>
-          <span class="toggle-track"></span>
-          <span class="toggle-thumb"></span>
-        </label>
-      </div>
     </div>
     <div class="settings-group">
       <div class="settings-group-title">Display</div>
@@ -977,7 +937,10 @@
 
 <div class="theme-label" id="themeLabel"></div>
 
-<script>
+<script type="module">
+// The recorder's own client library, served by the recorder on this port.
+import { TrunkClient, LivePlayer, systemName } from "/api/client.js";
+
 // ── DOM refs ──
 const statusDot = document.getElementById('status-dot');
 const statusText = document.getElementById('status-text');
@@ -1151,39 +1114,49 @@ const typeFilterDropdown = new MultiSelectDropdown(
   {
     allLabel: 'All Types',
     noun: 'types',
-    items: [
-      ['grant', 'Grant'],
-      ['affiliation', 'Affiliation'],
-      ['registration', 'Registration'],
-      ['deregistration', 'Deregistration'],
-      ['acknowledge', 'Acknowledge'],
-      ['data', 'Data Grant'],
-      ['location', 'Location'],
-      ['call-end', 'Call End'],
-      ['signal', 'Signal'],
-      ['call-alert', 'Call Alert'],
-    ],
+    // No fixed list: a type is added the first time a row of it arrives (ensureTypeItem).
     onChange: onTypeFilterChange,
   }
 );
+// Labels for the type filter, by filter key (getFilterKey).
+const TYPE_LABELS = {
+  'grant': 'Grant',
+  'unit-active': 'Unit Active',
+  'affiliation': 'Affiliation',
+  'new-unit': 'New Unit',
+  'new-tg': 'New Talkgroup',
+  'tones': 'Tones',
+  'call-end': 'Call End',
+};
+// The type filter saved last time (null: all); applied as each type first appears.
+var _pendingTypeFilter = null;
+function ensureTypeItem(filterKey) {
+  if (typeFilterDropdown.items.has(filterKey)) return;
+  typeFilterDropdown.addItem(filterKey, TYPE_LABELS[filterKey] || filterKey);
+  if (_pendingTypeFilter && _pendingTypeFilter.indexOf(filterKey) === -1) {
+    var sel = typeFilterDropdown.getSelected();
+    sel.delete(filterKey);
+    typeFilterDropdown.setSelected(sel);
+  }
+}
 const clearBtn = document.getElementById('clear-btn');
 
 // ── State ──
-let eventSource = null;
-let lastEventId = '';
+// The connection to the recorder serving this page (it reconnects by itself).
+const rec = new TrunkClient();
 let totalCount = 0;
 let eventCountDirty = false;
 let everConnected = false;
 
-// Active calls: call_id -> { data, row, startTimeMs, fading, lastAudioTime, lastElapsedText, panDot, wasAudioActive }
+// Active calls: call_id (the recorder's CallView.id, as text) -> { data, row, startTimeMs, fading, lastAudioTime, lastElapsedText, wasAudioActive }
 const activeChannels = new Map();
-// Frequency view: "system_id:freq" -> { data, row, startTimeMs, idle, elapsedCell, panDot, ... }
+// Frequency view: "system_id:freq" -> { data, row, startTimeMs, idle, elapsedCell, ... }
 let viewMode = 'talkgroup'; // 'talkgroup' or 'frequency'
 const freqChannels = new Map();
-// Seen systems for filter dropdown
-const seenSystems = new Map(); // system_id -> system_name
+// Seen systems for filter dropdown. A system's id here is its short name.
+const seenSystems = new Map(); // system_id (short name) -> system_name
 var _pendingSystemRestore = null; // deferred system filter restore (array of system IDs)
-// Talkgroup metadata cache: "system_id:tgid" -> { alpha_tag, description, group, tag }
+// Talkgroup metadata cache: "shortName:tgid" -> { alpha_tag, description, group, tag }
 const tgCache = new Map();
 
 function setStatus(state, text) {
@@ -1201,6 +1174,7 @@ function formatTime(ts) {
 
 function parseStartTimeMs(startTime) {
   if (!startTime) return 0;
+  if (typeof startTime === 'number') return startTime; // callToData gives Unix ms
   var t = new Date(startTime).getTime();
   return isNaN(t) ? 0 : t;
 }
@@ -1214,25 +1188,28 @@ function formatElapsedMs(startMs) {
   return h + ':' + String(Math.floor((secs % 3600) / 60)).padStart(2, '0') + ':' + String(secs % 60).padStart(2, '0');
 }
 
+// callToData sets audio_type from the call: 'analog', 'digital tdma' (a slot), 'nxdn48' / 'nxdn96', else 'digital'.
 function mapAudioType(audioType) {
   if (!audioType) return '';
   const lower = String(audioType).toLowerCase();
+  if (lower.startsWith('nxdn')) return lower.toUpperCase();
   if (lower === 'digital tdma') return 'TDMA';
   if (lower === 'digital') return 'FDMA';
   if (lower === 'analog') return 'Analog';
   return String(audioType);
 }
 
-// System name lookup (populated from /api/v1/systems on load)
+// System name lookup: short name -> what people call it (config `name`), from the recorder's config
 const systemNames = new Map();
 function getSystemName(data) {
   if (data.system_name) return data.system_name;
   if (data.system_id && systemNames.has(data.system_id)) return systemNames.get(data.system_id);
-  return 'sys-' + (data.system_id || '?');
+  return data.system_id || '?';
 }
 
+// The site a call is on (a trunked system's site name; none for a conventional call).
 function getSiteName(data) {
-  return data.short_name || data.site_short_name || data.sys_name || '';
+  return data.site || '';
 }
 
 function matchesSystemFilter(data) {
@@ -1240,11 +1217,25 @@ function matchesSystemFilter(data) {
 }
 
 // ── Event type to badge mapping ──
+// Rows come from the calls on the air ('call': a talker on a call, 'call_end') and from the
+// recorder's monitorEvent kinds (unitFirstSeen, unitActive, unitAffiliated, tgFirstSeen, tgActive,
+// tonePattern). The older tr-engine types stay mapped below; nothing sends them now.
 function getBadgeInfo(eventType) {
   switch (eventType) {
     case 'call':
     case 'grant':
+    case 'tgActive':
       return { cls: 'badge-grant', label: 'GRANT' };
+    case 'unitActive':
+      return { cls: 'badge-location', label: 'UNIT ACTIVE' };
+    case 'unitAffiliated':
+      return { cls: 'badge-affiliation', label: 'AFFILIATION' };
+    case 'unitFirstSeen':
+      return { cls: 'badge-registration', label: 'NEW UNIT' };
+    case 'tgFirstSeen':
+      return { cls: 'badge-acknowledge', label: 'NEW TG' };
+    case 'tonePattern':
+      return { cls: 'badge-signal', label: 'TONES' };
     case 'join':
       return { cls: 'badge-affiliation', label: 'AFFILIATION' };
     case 'on':
@@ -1273,7 +1264,12 @@ function getBadgeInfo(eventType) {
 // Map eventType to a filter key (for the type filter dropdown)
 function getFilterKey(eventType) {
   switch (eventType) {
-    case 'call': case 'grant': return 'grant';
+    case 'call': case 'grant': case 'tgActive': return 'grant';
+    case 'unitActive': return 'unit-active';
+    case 'unitAffiliated': return 'affiliation';
+    case 'unitFirstSeen': return 'new-unit';
+    case 'tgFirstSeen': return 'new-tg';
+    case 'tonePattern': return 'tones';
     case 'join': return 'affiliation';
     case 'on': return 'registration';
     case 'off': return 'deregistration';
@@ -1292,7 +1288,7 @@ function trackSystem(data) {
   if (!data.system_id) return;
   const sid = String(data.system_id);
   if (!seenSystems.has(sid)) {
-    const name = data.system_name || 'sys-' + sid;
+    const name = data.system_name || systemNames.get(sid) || sid;
     seenSystems.set(sid, name);
     systemFilterDropdown.addItem(sid, name);
     // Apply pending restore once all saved systems are available
@@ -1343,27 +1339,11 @@ function buildChannelCells(d, entry) {
     spk.title = speakerTitle(isMuted, encrypted);
     spk.addEventListener('click', function(e) {
       e.stopPropagation();
-      if (window._omniAudio) window._omniAudio.toggleMute(d.tgid);
+      if (window._omniAudio) window._omniAudio.toggleMute(d.tgid, d.system_id);
     });
     cSpk.appendChild(spk);
   }
   cells.push(cSpk);
-
-  // Pan indicator
-  const cPan = document.createElement('td');
-  cPan.style.textAlign = 'center';
-  cPan.className = 'pan-cell';
-  const panBar = document.createElement('span');
-  panBar.className = 'pan-indicator';
-  const panCenter = document.createElement('span');
-  panCenter.className = 'pan-center';
-  panBar.appendChild(panCenter);
-  const panDot = document.createElement('span');
-  panDot.className = 'pan-dot';
-  panDot.style.left = '14px'; // center default
-  panBar.appendChild(panDot);
-  cPan.appendChild(panBar);
-  cells.push(cPan);
 
   // System
   const c0 = document.createElement('td');
@@ -1473,65 +1453,13 @@ function addActiveChannel(data) {
   row.dataset.tgid = String(data.tgid || 0);
   if (data.system_id) row.dataset.systemId = String(data.system_id);
 
-  entry = { data: data, row: row, startTimeMs: parseStartTimeMs(data.start_time), fading: false, elapsedCell: null, panDot: null, wasAudioActive: false, lastAudioTime: 0, lastElapsedText: '' };
+  entry = { data: data, row: row, startTimeMs: parseStartTimeMs(data.start_time), fading: false, elapsedCell: null, wasAudioActive: false, lastAudioTime: 0, lastElapsedText: '' };
   activeChannels.set(callId, entry);
   renderChannelRow(entry);
   entry.elapsedCell = row.querySelector('.elapsed-cell');
-  entry.panDot = row.querySelector('.pan-dot');
   applyChannelSystemFilter(entry);
 
   insertChannelSorted(row, data.tgid || 0);
-  updateChannelsEmptyState();
-}
-
-// Create a channel row from audio frames (no MQTT required)
-function addAudioChannel(tgid, systemId) {
-  if (viewMode === 'frequency') return; // no freq available from audio frames
-  var channelKey = 'audio-' + systemId + '-' + tgid;
-
-  // Already exists (audio-keyed or real call_id with same tgid)?
-  if (activeChannels.has(channelKey)) {
-    var existing = activeChannels.get(channelKey);
-    existing.lastAudioTime = Date.now();
-    return;
-  }
-  // Check if a real call_id entry already covers this tgid
-  for (var e of activeChannels.values()) {
-    if (e.data.tgid === tgid && e.data.system_id === systemId && !e.fading) {
-      e.lastAudioTime = Date.now();
-      return;
-    }
-  }
-
-  // Look up metadata from talkgroup cache
-  var meta = tgCache.get(systemId + ':' + tgid) || {};
-  var sysName = systemNames.get(systemId) || 'sys-' + systemId;
-
-  var data = {
-    call_id: channelKey,
-    system_id: systemId,
-    system_name: sysName,
-    tgid: tgid,
-    tg_alpha_tag: meta.alpha_tag || '',
-    start_time: new Date().toISOString(),
-  };
-
-  trackSystem(data);
-
-  var row = document.createElement('tr');
-  row.className = 'channel-row';
-  row.dataset.callId = channelKey;
-  row.dataset.tgid = String(tgid);
-  row.dataset.systemId = String(systemId);
-
-  var entry = { data: data, row: row, startTimeMs: parseStartTimeMs(data.start_time), fading: false, elapsedCell: null, panDot: null, wasAudioActive: false, lastAudioTime: Date.now(), lastElapsedText: '' };
-  activeChannels.set(channelKey, entry);
-  renderChannelRow(entry);
-  entry.elapsedCell = row.querySelector('.elapsed-cell');
-  entry.panDot = row.querySelector('.pan-dot');
-  applyChannelSystemFilter(entry);
-
-  insertChannelSorted(row, tgid);
   updateChannelsEmptyState();
 }
 
@@ -1578,11 +1506,10 @@ function addActiveChannelFreqMode(data) {
   row.dataset.freq = String(data.freq);
   if (data.system_id) row.dataset.systemId = String(data.system_id);
 
-  entry = { data: data, row: row, startTimeMs: parseStartTimeMs(data.start_time), fading: false, idle: false, elapsedCell: null, panDot: null, wasAudioActive: false, lastAudioTime: 0, lastElapsedText: '' };
+  entry = { data: data, row: row, startTimeMs: parseStartTimeMs(data.start_time), fading: false, idle: false, elapsedCell: null, wasAudioActive: false, lastAudioTime: 0, lastElapsedText: '' };
   freqChannels.set(key, entry);
   renderChannelRow(entry);
   entry.elapsedCell = row.querySelector('.elapsed-cell');
-  entry.panDot = row.querySelector('.pan-dot');
   applyChannelSystemFilter(entry);
 
   insertChannelSortedByFreq(row, data.freq);
@@ -1634,19 +1561,18 @@ function renderChannelRow(entry) {
       row.appendChild(cell);
     }
     entry.elapsedCell = row.querySelector('.elapsed-cell');
-    entry.panDot = row.querySelector('.pan-dot');
     return;
   }
 
   // Subsequent renders: update changed cells in-place (skip full teardown)
   const ch = row.children;
-  if (ch.length < 11) {
+  const encrypted = d.encrypted === true;
+  if (ch.length < 10) {
     // Fallback: full rebuild if unexpected structure
     while (row.firstChild) row.removeChild(row.firstChild);
     const cells = buildChannelCells(d, entry);
     for (const cell of cells) row.appendChild(cell);
     entry.elapsedCell = row.querySelector('.elapsed-cell');
-    entry.panDot = row.querySelector('.pan-dot');
     return;
   }
   // Update speaker icon (col 0)
@@ -1658,31 +1584,41 @@ function renderChannelRow(entry) {
     spk.classList.toggle('encrypted', encrypted);
     spk.title = speakerTitle(isMuted, encrypted);
   }
-  // col 1 (pan) - no update needed
-  // col 2 (system) - rarely changes
+  // col 1 (system) - rarely changes
   var sysName = getSystemName(d);
-  if (ch[2].textContent !== sysName) ch[2].textContent = sysName;
-  // col 3 (freq)
+  if (ch[1].textContent !== sysName) ch[1].textContent = sysName;
+  // col 2 (freq)
   var freq = d.freq ? (d.freq / 1e6).toFixed(4) : '';
-  if (ch[3].textContent !== freq) ch[3].textContent = freq;
-  // col 4 (tgid)
+  if (ch[2].textContent !== freq) ch[2].textContent = freq;
+  // col 3 (tgid)
   var tgStr = d.tgid != null ? String(d.tgid) : '';
-  if (ch[4].textContent !== tgStr) ch[4].textContent = tgStr;
-  // col 5 (alpha tag)
+  if (ch[3].textContent !== tgStr) ch[3].textContent = tgStr;
+  // col 4 (alpha tag)
   var alpha = d.tg_alpha_tag || '';
-  if (ch[5].textContent !== alpha) ch[5].textContent = alpha;
-  // col 6 (source unit)
+  if (ch[4].textContent !== alpha) ch[4].textContent = alpha;
+  // col 5 (source unit)
   var unitStr = d.unit != null ? String(d.unit) : '';
-  var unitSpan = ch[6].querySelector('.val');
+  var unitSpan = ch[5].querySelector('.val');
   if (unitSpan && unitSpan.textContent !== unitStr) unitSpan.textContent = unitStr;
-  // col 7 (unit alias)
+  // col 6 (unit alias)
   var unitAlias = d.unit_alpha_tag || '';
-  if (ch[7].textContent !== unitAlias) ch[7].textContent = unitAlias;
-  // col 8 (elapsed) - handled by timer
-  // col 9 (mode)
+  if (ch[6].textContent !== unitAlias) ch[6].textContent = unitAlias;
+  // col 7 (elapsed) - handled by timer
+  // col 8 (mode)
   var mode = mapAudioType(d.audio_type);
-  if (ch[9].textContent !== mode) ch[9].textContent = mode;
-  // col 10 (encryption) - skip, rarely changes
+  if (ch[8].textContent !== mode) ch[8].textContent = mode;
+  // col 9 (encryption): a call can turn out encrypted after it starts
+  var hasBadge = !!ch[9].firstChild;
+  if (encrypted !== hasBadge) {
+    ch[9].textContent = '';
+    if (encrypted) {
+      var badge = document.createElement('span');
+      badge.className = 'encrypted-badge';
+      badge.textContent = 'ENCRYPTED';
+      badge.dataset.short = 'ENC';
+      ch[9].appendChild(badge);
+    }
+  }
 }
 
 function removeActiveChannel(data) {
@@ -1813,9 +1749,9 @@ function isDuplicateActivity(eventType, data) {
   var unit = data.unit || data.unit_id || 0;
   var tgid = data.tgid || 0;
   var norm = dedupType(eventType);
-  // Call-level events (grant/call_end): one per talkgroup, dedup on (type, tgid) only
-  // Unit-level events: dedup on (unit, type, tgid)
-  var callLevel = (norm === 'grant' || norm === 'call_end');
+  // Call-level events (call_end, or a grant without a unit): one per talkgroup, dedup on (type, tgid) only
+  // Unit-level events (each talker's grant too): dedup on (unit, type, tgid)
+  var callLevel = (norm === 'call_end' || (norm === 'grant' && !unit));
   for (var i = 0; i < recentActivity.length; i++) {
     var r = recentActivity[i];
     if (r.type === norm && r.tgid === tgid && (callLevel || r.unit === unit)) return true;
@@ -1828,6 +1764,7 @@ function addActivityRow(eventType, data) {
   trackSystem(data);
 
   const filterKey = getFilterKey(eventType);
+  ensureTypeItem(filterKey);
   if (!typeFilterDropdown.matchesValue(filterKey)) return;
   if (!matchesSystemFilter(data)) return;
   if (isDuplicateActivity(eventType, data)) return;
@@ -1867,15 +1804,14 @@ function onSystemFilterChange() {
   // Filter activity rows (hide/show based on both filters)
   refilterActivityRows();
 
-  // Update audio subscription if listening
-  if (typeof engine !== 'undefined' && engine && typeof listening !== 'undefined' && listening) {
-    engine.subscribe(getSubscribeFilter());
-  }
+  // Update what the recorder sends us to play, if listening
+  if (window._omniAudio) window._omniAudio.onSystemFilterChange();
 }
 
 // ── Type Filter ──
 function onTypeFilterChange() {
-  localStorage.setItem('omni-type-filter', JSON.stringify([...typeFilterDropdown.getSelected()]));
+  _pendingTypeFilter = typeFilterDropdown.isAllSelected() ? null : [...typeFilterDropdown.getSelected()];
+  localStorage.setItem('omni-type-filter', JSON.stringify(_pendingTypeFilter));
   refilterActivityRows();
 }
 
@@ -1901,107 +1837,185 @@ clearBtn.addEventListener('click', function() {
   }
 });
 
-// ── SSE Connection ──
-function connect() {
-  if (eventSource) {
-    eventSource.close();
+// ── The recorder's connection ──
+// tr-engine pushed call_start / call_end / unit_event over SSE. The recorder sends
+// `status` about twice a second with every call on the air (rec.calls): a call that
+// appears is a start, one that disappears is an end. Its notable events come as
+// `monitorEvent` messages.
+
+function updateConnectionStatus() {
+  if (!rec.connected) {
+    if (rec.exited) setStatus('disconnected', 'recorder stopped, waiting for it...');
+    else setStatus('connecting', everConnected ? 'reconnecting...' : 'connecting...');
+    return;
   }
-
-  const url = '/api/v1/events/stream';
-
-  setStatus('connecting', 'connecting...');
-  everConnected = false;
-  eventSource = new EventSource(url);
-
-  eventSource.onopen = function() {
-    setStatus('connected', 'connected');
-    everConnected = true;
-  };
-
-  eventSource.onerror = function() {
-    if (eventSource.readyState === EventSource.CLOSED) {
-      setStatus('disconnected', 'disconnected');
-    } else {
-      setStatus('connecting', 'reconnecting...');
-    }
-  };
-
-  // Listen for relevant event types
-  eventSource.addEventListener('call_start', function(e) {
-    lastEventId = e.lastEventId;
-    try {
-      const data = JSON.parse(e.data);
-      addActiveChannel(data);
-      addActivityRow('grant', data);
-    } catch (err) {
-      console.error('parse error', 'call_start', err);
-    }
-  });
-
-  eventSource.addEventListener('call_end', function(e) {
-    lastEventId = e.lastEventId;
-    try {
-      const data = JSON.parse(e.data);
-      removeActiveChannel(data);
-      addActivityRow('call_end', data);
-    } catch (err) {
-      console.error('parse error', 'call_end', err);
-    }
-  });
-
-  eventSource.addEventListener('unit_event', function(e) {
-    lastEventId = e.lastEventId;
-    try {
-      const data = JSON.parse(e.data);
-      addActivityRow(data.event_type || 'unknown', data);
-    } catch (err) {
-      console.error('parse error', 'unit_event', err);
-    }
-  });
+  everConnected = true;
+  var ph = rec.phase || {};
+  if (ph.phase === 'running') setStatus('connected', 'connected');
+  else setStatus('connected', 'connected, recorder ' + (ph.phase || 'idle') + (ph.error ? ': ' + ph.error : ''));
 }
 
-// Fetch system names for friendly display
-fetch('/api/v1/systems')
-  .then(function(r) { return r.ok ? r.json() : {}; })
-  .then(function(resp) {
-    var systems = resp.systems || resp;
-    if (Array.isArray(systems)) {
-      for (const s of systems) {
-        var id = s.system_id || s.id;
-        var name = s.name || s.short_name;
-        if (id && name) {
-          systemNames.set(id, name);
-          trackSystem({ system_id: id, system_name: name });
-        }
-      }
-    }
-  })
-  .catch(function() { /* ignore — fallback to sys-N */ });
+// Talkgroup metadata for one system's talkgroup.
+function tgMeta(sys, tgid) {
+  return tgCache.get(sys + ':' + tgid) || {};
+}
 
-// Fetch talkgroup metadata cache for audio-driven channel creation
-fetch('/api/v1/talkgroups?limit=5000')
-  .then(function(r) { return r.ok ? r.json() : {}; })
-  .then(function(resp) {
-    var tgs = resp.talkgroups || resp;
-    if (Array.isArray(tgs)) {
-      for (var i = 0; i < tgs.length; i++) {
-        var tg = tgs[i];
-        var sysId = tg.system_id;
-        var tgid = tg.tgid;
-        if (sysId && tgid) {
-          tgCache.set(sysId + ':' + tgid, {
-            alpha_tag: tg.alpha_tag || '',
-            description: tg.description || '',
-            group: tg.group || '',
-            tag: tg.tag || '',
-          });
-        }
-      }
-    }
-  })
-  .catch(function() { /* ignore — audio channels will show without metadata */ });
+// Systems and their names from the config (trunked, then conventional).
+function loadSystems() {
+  var cfg = rec.config;
+  if (!cfg) return;
+  var all = (cfg.systems || []).concat(cfg.conventional || []);
+  for (var i = 0; i < all.length; i++) {
+    var sys = all[i];
+    if (!sys.shortName) continue;
+    systemNames.set(sys.shortName, sys.name || sys.shortName);
+    trackSystem({ system_id: sys.shortName, system_name: sys.name || sys.shortName });
+  }
+}
 
-connect();
+// Every system's talkgroups (rec.talkgroups: the talkgroup file's rows with the edits since;
+// a conventional system's channels) into tgCache, "shortName:tgid" -> metadata.
+function loadTalkgroups() {
+  tgCache.clear();
+  var names = new Set(Object.keys(rec.talkgroupRows || {}));
+  var cfg = rec.config;
+  if (cfg) {
+    (cfg.systems || []).concat(cfg.conventional || []).forEach(function(sys) { if (sys.shortName) names.add(sys.shortName); });
+  }
+  for (var name of names) {
+    for (var [tgid, tg] of rec.talkgroups(name)) {
+      tgCache.set(name + ':' + tgid, {
+        alpha_tag: tg.alphaTag || '',
+        description: tg.description || '',
+        group: tg.group || '',
+        tag: tg.tag || '',
+      });
+    }
+  }
+}
+
+// A call on the air (CallView) -> the shape the renderers read (tr-engine's call fields).
+function callToData(c, prev) {
+  var sys = c.systemName || systemName(rec.status, c.system);
+  var unit = c.sources && c.sources.length ? c.sources[c.sources.length - 1] : null;
+  var nowS = rec.status ? rec.status.nowS : c.startS;
+  return {
+    call_id: String(c.id),
+    system_id: sys,
+    system_name: systemNames.get(sys) || sys,
+    site: c.site || '',
+    tgid: c.talkgroup,
+    tg_alpha_tag: c.alphaTag || tgMeta(sys, c.talkgroup).alpha_tag || '',
+    freq: c.freqHz,
+    unit: unit,
+    unit_alpha_tag: unit != null ? rec.unitName(sys, unit) : '',
+    audio_type: c.analog ? 'analog' : c.nxdn ? c.nxdn : c.slot != null ? 'digital tdma' : 'digital',
+    // Encrypted and not being decrypted: no audio.
+    encrypted: !!c.encrypted && !c.decrypted,
+    emergency: !!c.emergency,
+    // Engine seconds -> wall clock, once, when the call is first seen.
+    start_time: prev ? prev.start_time : Date.now() - Math.max(0, nowS - c.startS) * 1000,
+    time: Date.now(),
+    sources: (c.sources || []).slice(),
+  };
+}
+
+// A talker on a call, for the activity feed.
+function talkerData(data, unit) {
+  var d = Object.assign({}, data);
+  d.unit = unit;
+  d.unit_alpha_tag = rec.unitName(data.system_id, unit);
+  d.time = Date.now();
+  return d;
+}
+
+// The calls on the air last time: CallView.id (as text) -> data.
+const liveCalls = new Map();
+
+function sameRow(a, b) {
+  return a.unit === b.unit && a.unit_alpha_tag === b.unit_alpha_tag && a.tg_alpha_tag === b.tg_alpha_tag &&
+    a.encrypted === b.encrypted && a.emergency === b.emergency && a.freq === b.freq && a.audio_type === b.audio_type;
+}
+
+function syncCalls() {
+  var calls = rec.calls || [];
+  var present = new Set();
+  var tgOnAir = new Set();
+  var freqOnAir = new Set();
+  for (var i = 0; i < calls.length; i++) {
+    var sysName = calls[i].systemName || systemName(rec.status, calls[i].system);
+    present.add(String(calls[i].id));
+    tgOnAir.add(sysName + ':' + calls[i].talkgroup);
+    freqOnAir.add(sysName + ':' + calls[i].freqHz);
+  }
+
+  // Ends first, so a new call on the same channel takes the row over.
+  for (var [id, prev] of liveCalls) {
+    if (present.has(id)) continue;
+    liveCalls.delete(id);
+    // Another call on the air may hold the row (one row per talkgroup / per frequency).
+    var held = viewMode === 'frequency' ? freqOnAir.has(prev.system_id + ':' + prev.freq) : tgOnAir.has(prev.system_id + ':' + prev.tgid);
+    if (!held) removeActiveChannel(prev);
+    var end = Object.assign({}, prev);
+    end.time = Date.now();
+    addActivityRow('call_end', end);
+  }
+
+  for (var j = 0; j < calls.length; j++) {
+    var c = calls[j];
+    var key = String(c.id);
+    var before = liveCalls.get(key);
+    var data = callToData(c, before);
+    liveCalls.set(key, data);
+    if (!before) {
+      addActiveChannel(data);
+      if (data.sources.length) data.sources.forEach(function(u) { addActivityRow('call', talkerData(data, u)); });
+      else addActivityRow('call', data);
+      continue;
+    }
+    // A new talker on the call: a row each.
+    for (var k = 0; k < data.sources.length; k++) {
+      if (before.sources.indexOf(data.sources[k]) === -1) addActivityRow('call', talkerData(data, data.sources[k]));
+    }
+    if (!sameRow(before, data)) addActiveChannel(data);
+  }
+}
+
+// The recorder's notable events that are about radios and talkgroups. (The recorder
+// does not send raw registrations, affiliations or acknowledgements to interfaces.)
+const FEED_KINDS = { unitFirstSeen: true, unitActive: true, unitAffiliated: true, tgFirstSeen: true, tgActive: true, tonePattern: true };
+
+function onMonitorEvent(m) {
+  if (!FEED_KINDS[m.kind]) return;
+  var sys = m.system || '';
+  var base = {
+    system_id: sys,
+    system_name: systemNames.get(sys) || sys,
+    tgid: m.talkgroup != null ? m.talkgroup : '',
+    tg_alpha_tag: m.alphaTag || (m.talkgroup != null ? tgMeta(sys, m.talkgroup).alpha_tag : '') || '',
+    time: m.t ? m.t * 1000 : Date.now(),
+  };
+  if (m.kind === 'tonePattern') base.tg_alpha_tag = m.text || base.tg_alpha_tag;
+  if (m.kind === 'tgActive' && m.units && m.units.length) {
+    m.units.forEach(function(u) {
+      addActivityRow(m.kind, Object.assign({}, base, { unit: u, unit_alpha_tag: rec.unitName(sys, u) }));
+    });
+    return;
+  }
+  var unit = m.unit != null ? m.unit : '';
+  var alias = m.alias || (m.unit != null ? rec.unitName(sys, m.unit) : '');
+  addActivityRow(m.kind, Object.assign({}, base, { unit: unit, unit_alpha_tag: alias }));
+}
+
+rec.on('config', function() { loadSystems(); loadTalkgroups(); });
+rec.on('talkgroups', loadTalkgroups);
+rec.on('talkgroupEdited', loadTalkgroups);
+rec.on('monitorEvent', onMonitorEvent);
+rec.on('status', syncCalls);
+rec.on('state', syncCalls);
+rec.on('connection', updateConnectionStatus);
+rec.on('change', updateConnectionStatus);
+setStatus('connecting', 'connecting...');
 
 // ── View Toggle (TG / FREQ) ──
 var channelsHeader = document.getElementById('channels-header');
@@ -2039,7 +2053,6 @@ function switchViewMode(newMode) {
         while (entry.row.firstChild) entry.row.removeChild(entry.row.firstChild);
         renderChannelRow(entry);
         entry.elapsedCell = entry.row.querySelector('.elapsed-cell');
-        entry.panDot = entry.row.querySelector('.pan-dot');
         applyChannelSystemFilter(entry);
         insertChannelSorted(entry.row, entry.data.tgid || 0);
       }
@@ -2065,23 +2078,18 @@ document.getElementById('view-toggle').addEventListener('click', function(e) {
 });
 
 // ── Stale Row Cleanup (15s) ──
-// SSE and WebSocket audio handle all additions. This only removes rows that got stuck.
+// The recorder lists every call on the air, so a row is stuck when no call on its
+// talkgroup is (a call that ended while the connection was down).
 setInterval(function() {
   if (viewMode === 'frequency') return; // freq mode rows are persistent
-  var now = Date.now();
+  var onAir = new Set();
+  for (var d of liveCalls.values()) onAir.add(d.system_id + ':' + d.tgid);
   var toRemove = [];
   for (var pair of activeChannels) {
     var key = pair[0];
     var ent = pair[1];
     if (ent.fading) continue;
-
-    var age = ent.startTimeMs ? now - ent.startTimeMs : 0;
-    var hasRecentAudio = ent.lastAudioTime && (now - ent.lastAudioTime < 10000);
-
-    // Remove rows older than 5 minutes with no recent audio
-    if (age > 300000 && !hasRecentAudio) {
-      toRemove.push(key);
-    }
+    if (!onAir.has(ent.data.system_id + ':' + ent.data.tgid)) toRemove.push(key);
   }
 
   for (var r = 0; r < toRemove.length; r++) {
@@ -2100,21 +2108,22 @@ setInterval(function() {
   }
   if (toRemove.length) updateChannelsEmptyState();
 }, 15000);
-</script>
-<script src="audio-engine.js"></script>
-<script>
 // ── Live Audio Integration ──
+// tr-engine's audio-engine.js and PCM WebSocket -> the recorder's live audio and client.js's LivePlayer.
 (function() {
   const listenToggle = document.getElementById('listen-toggle');
   const listenLabel = document.getElementById('listen-label');
   const audioControls = document.getElementById('audio-controls');
   const masterVol = document.getElementById('master-vol');
-  const autoPanToggle = document.getElementById('auto-pan-toggle');
   const audioStatusEl = document.getElementById('audio-status');
 
-  let engine = null;
+  // Plays the recorder's live audio: one call at a time, the first heard, until it goes quiet
+  // (LivePlayer has no stereo pan, so tr-engine's auto-pan is not carried over).
+  const player = new LivePlayer();
   let listening = false;
-  // Every talkgroup plays unless it is in here ("sysId:tgid" composite keys).
+  // The talkgroups heard playing lately: tgid -> when (ms), for the row glow and the status.
+  const audibleTGs = new Map();
+  // Every talkgroup plays unless it is in here ("shortName:tgid" composite keys).
   const mutedTGs = new Set();
   // A tgid is audible unless every system's version of it is muted.
   function isTGSelected(tgid) {
@@ -2144,7 +2153,6 @@ setInterval(function() {
   const tgSelectAllBtn = document.getElementById('tg-select-all');
   const tgSelectNoneBtn = document.getElementById('tg-select-none');
   const setVolumeEl = document.getElementById('set-volume');
-  const setAutoPanEl = document.getElementById('set-auto-pan');
   const setBufferSizeEl = document.getElementById('set-buffer-size');
 
   // ── Persist / Restore Settings ──
@@ -2155,11 +2163,10 @@ setInterval(function() {
       if (Array.isArray(saved.muted)) {
         saved.muted.forEach(function(t) { mutedTGs.add(String(t)); });
       }
-      if (saved.autoPan === false) autoPanToggle.checked = false;
       if (saved.bufferSize) { bufferSizeSelect.value = saved.bufferSize; setBufferSizeEl.value = saved.bufferSize; }
       if (Array.isArray(saved.systemFilter)) _pendingSystemRestore = saved.systemFilter;
       else if (typeof saved.systemFilter === 'string' && saved.systemFilter) _pendingSystemRestore = [saved.systemFilter]; // migrate legacy
-      if (Array.isArray(saved.typeFilter)) typeFilterDropdown.setSelected(saved.typeFilter);
+      if (Array.isArray(saved.typeFilter)) _pendingTypeFilter = saved.typeFilter; // applied as each type appears
       if (saved.listening) pendingListen = true;
       if (saved.viewMode === 'frequency') {
         // Defer switching until after DOM is ready — use setTimeout to avoid race
@@ -2186,12 +2193,11 @@ setInterval(function() {
       var obj = {
         volume: parseInt(masterVol.value),
         muted: Array.from(mutedTGs),
-        autoPan: autoPanToggle.checked,
         bufferSize: bufferSizeSelect.value,
         hiddenColumns: getHiddenColumns(),
         listening: listening,
         systemFilter: [...systemFilterDropdown.getSelected()],
-        typeFilter: [...typeFilterDropdown.getSelected()],
+        typeFilter: typeFilterDropdown.isAllSelected() ? null : [...typeFilterDropdown.getSelected()],
         viewMode: viewMode,
         panelSplit: pct
       };
@@ -2279,10 +2285,10 @@ setInterval(function() {
   }
 
   // Restore type filter from standalone key as fallback
-  if (typeFilterDropdown.isAllSelected()) {
+  if (!_pendingTypeFilter) {
     try {
       var _tf = JSON.parse(localStorage.getItem('omni-type-filter'));
-      if (Array.isArray(_tf) && _tf.length > 0) typeFilterDropdown.setSelected(_tf);
+      if (Array.isArray(_tf) && _tf.length > 0) _pendingTypeFilter = _tf;
     } catch(e) {}
   }
 
@@ -2301,55 +2307,56 @@ setInterval(function() {
   }
   updateTGCount();
 
-  function getSubscribeFilter() {
-    if (systemFilterDropdown.isAllSelected()) return {};
-    var selected = [...systemFilterDropdown.getSelected()].map(s => parseInt(s)).filter(n => !isNaN(n));
-    return selected.length > 0 ? { systems: selected } : {};
+  // What to ask the recorder for: one system's audio when one is picked, else every call's
+  // (the system filter and the mutes are applied to each chunk as it arrives).
+  function getListenFilter() {
+    var selected = [...systemFilterDropdown.getSelected()];
+    if (!systemFilterDropdown.isAllSelected() && selected.length === 1) return { system: selected[0] };
+    return {};
   }
 
-  // ── Audio engine lifecycle ──
+  // The master volume (0-100) -> the player's gain: 80, the default, is the player's own 2.
+  // LivePlayer has no volume setter: its gain is read when its output is made, and its gain
+  // node (_gain) is set directly while playing.
+  function setVolume(v) {
+    var g = 2.5 * (parseInt(v) || 0) / 100;
+    player.gainValue = g;
+    if (player._gain) player._gain.gain.value = g;
+  }
+
+  // ── Live audio lifecycle ──
+  rec.on('audio', function(chunk) {
+    if (!listening) return;
+    var sys = systemName(rec.status, chunk.system);
+    if (!systemFilterDropdown.matchesValue(sys)) return;
+    if (mutedTGs.has(sys + ':' + chunk.talkgroup)) return;
+    player.play(chunk);
+    if (player.nowPlaying && player.nowPlaying.callId === chunk.callId) audibleTGs.set(chunk.talkgroup, Date.now());
+  });
+
   async function startListening() {
-    if (engine) return;
-    engine = new AudioEngine();
-
-    engine.on('status', function(s) {
-      // status is handled by the 250ms poll below
-    });
-
-    engine.on('error', function() {
+    if (listening) return;
+    setVolume(masterVol.value);
+    try {
+      await player.resume(); // after the click: browsers only start sound then
+    } catch (e) {
       setAudioStatus('error');
-    });
-
-    engine.on('tg_created', function(ev) {
-      // Everything plays unless the user muted it (composite key)
-      engine.setMute(ev.key, mutedTGs.has(ev.key));
-      // Audio channel rows disabled — SSE call_start handles row creation
-      highlightAudioTG(ev.tgid, true);
-    });
-
-    engine.on('tg_removed', function(ev) {
-      highlightAudioTG(ev.tgid, false);
-    });
-
-    await engine.start();
-    engine.setMasterVolume(parseInt(masterVol.value) / 100);
-    engine.setAutoPan(autoPanToggle.checked);
-    setAutoPanEl.checked = autoPanToggle.checked;
-    engine.subscribe(getSubscribeFilter());
+      return;
+    }
+    rec.listen(getListenFilter());
 
     listening = true;
     listenToggle.classList.add('active');
     listenLabel.textContent = 'LISTENING';
     audioControls.classList.add('visible');
-    setAudioStatus('connecting...');
+    setAudioStatus(rec.connected ? 'idle' : 'connecting...');
     saveSettings();
   }
 
   function stopListening() {
-    if (engine) {
-      engine.stop();
-      engine = null;
-    }
+    rec.listen(false);
+    player.stop();
+    audibleTGs.clear();
     listening = false;
     listenToggle.classList.remove('active');
     listenLabel.textContent = 'LISTEN';
@@ -2376,16 +2383,10 @@ setInterval(function() {
     }, { once: true });
   }
 
-  // ── Volume + pan controls (toolbar) ──
+  // ── Volume control (toolbar) ──
   masterVol.addEventListener('input', function() {
-    if (engine) engine.setMasterVolume(parseInt(masterVol.value) / 100);
+    setVolume(masterVol.value);
     setVolumeEl.value = masterVol.value;
-    saveSettings();
-  });
-
-  autoPanToggle.addEventListener('change', function() {
-    if (engine) engine.setAutoPan(autoPanToggle.checked);
-    setAutoPanEl.checked = autoPanToggle.checked;
     saveSettings();
   });
 
@@ -2400,22 +2401,30 @@ setInterval(function() {
     }
   }
 
-  // Audio subscription is updated via onSystemFilterChange() which is the dropdown's onChange callback
-
-  // ── Expose for buildChannelCells (selection model) ──
+  // ── Expose for buildChannelCells (selection model) and the system filter ──
   window._omniAudio = {
     isListening: function() { return listening; },
     isMuted: function(tgid) { return !isTGSelected(tgid); },
-    toggleMute: function(tgid) {
+    // The system filter changed: ask the recorder again (one system, or everything).
+    onSystemFilterChange: function() {
+      if (listening) rec.listen(getListenFilter());
+    },
+    toggleMute: function(tgid, systemId) {
       // Toggle all composite keys matching this tgid
       var wasSelected = isTGSelected(tgid);
+      var found = false;
       for (var pair of tgCache) {
         var compositeKey = pair[0];
         if (parseInt(compositeKey.split(':')[1]) === tgid) {
+          found = true;
           if (wasSelected) mutedTGs.add(compositeKey);
           else mutedTGs.delete(compositeKey);
-          if (engine) engine.setMute(compositeKey, wasSelected);
         }
+      }
+      // A talkgroup not in the talkgroup file: its row's own key.
+      if (!found && systemId) {
+        if (wasSelected) mutedTGs.add(systemId + ':' + tgid);
+        else mutedTGs.delete(systemId + ':' + tgid);
       }
       saveSelectedState();
       updateSpeakerIcon(tgid);
@@ -2430,16 +2439,10 @@ setInterval(function() {
     var now = Date.now();
     var doElapsed = (now - lastElapsedTick >= 1000);
 
-    // Audio poll (only when engine active)
-    var tgActivity = null, tgPan = null;
-    if (engine && listening) {
-      var active = engine.getActiveTGs();
-      tgActivity = new Map();
-      tgPan = new Map();
-      for (var i = 0; i < active.length; i++) {
-        tgActivity.set(active[i].tgid, active[i].lastActivity);
-        tgPan.set(active[i].tgid, active[i].pan);
-      }
+    // Audio poll (only while listening): the talkgroups heard playing
+    var tgActivity = null;
+    if (listening) {
+      tgActivity = new Map(audibleTGs);
     }
 
     // Batch all DOM writes into one rAF
@@ -2459,7 +2462,7 @@ setInterval(function() {
           }
         }
 
-        // Audio activity + pan (only when engine running)
+        // Audio activity (only while listening)
         if (tgActivity && entry.row.style.display !== 'none') {
           var lastAct = tgActivity.get(entry.data.tgid);
           var hasVoice = !!(lastAct && (now - lastAct < 500));
@@ -2471,11 +2474,6 @@ setInterval(function() {
           if (hasVoice) {
             entry.lastAudioTime = now;
             voiceCount++;
-          }
-          var panVal = tgPan.get(entry.data.tgid);
-          if (panVal !== undefined && entry.panDot) {
-            var newLeft = (14 + panVal * 14) + 'px';
-            if (entry.panDot.style.left !== newLeft) entry.panDot.style.left = newLeft;
           }
         }
       }
@@ -2494,14 +2492,9 @@ setInterval(function() {
 
     if (doElapsed) lastElapsedTick = now;
 
-    // TG lifecycle (outside rAF — these trigger addAudioChannel which does its own DOM work)
-    if (engine && listening) {
-      var active = engine.getActiveTGs();
-      for (var j = 0; j < active.length; j++) {
-        if (now - active[j].lastActivity > 30000) {
-          engine._removeTG(active[j].tgid);
-        }
-      }
+    // Forget talkgroups not heard for 30 s
+    for (var pair of audibleTGs) {
+      if (now - pair[1] > 30000) audibleTGs.delete(pair[0]);
     }
   }, 250);
 
@@ -2533,7 +2526,7 @@ setInterval(function() {
     var bySystem = new Map();
     for (var pair of tgCache) {
       var parts = pair[0].split(':');
-      var sysId = parseInt(parts[0]);
+      var sysId = parts[0];
       var tgid = parseInt(parts[1]);
       var meta = pair[1];
       // Apply search filter
@@ -2548,10 +2541,10 @@ setInterval(function() {
 
 
     // Sort systems and TGs
-    var sortedSystems = Array.from(bySystem.keys()).sort(function(a, b) { return a - b; });
+    var sortedSystems = Array.from(bySystem.keys()).sort(function(a, b) { return a.localeCompare(b); });
     for (var s = 0; s < sortedSystems.length; s++) {
       var sid = sortedSystems[s];
-      var sysName = systemNames.get(sid) || 'System ' + sid;
+      var sysName = systemNames.get(sid) || sid;
       var tgs = bySystem.get(sid);
       tgs.sort(function(a, b) { return a.tgid - b.tgid; });
 
@@ -2600,7 +2593,6 @@ setInterval(function() {
                 checkbox.checked = false;
               }
             }
-            if (engine) engine.setMute(key, mutedTGs.has(key));
             saveSelectedState();
             updateSpeakerIcon(tgid);
           });
@@ -2649,7 +2641,6 @@ setInterval(function() {
     var prev = Array.from(mutedTGs);
     mutedTGs.clear();
     for (var i = 0; i < prev.length; i++) {
-      if (engine) engine.setMute(prev[i], false);
       updateSpeakerIcon(parseInt(String(prev[i]).split(':').pop()));
     }
     saveSelectedState();
@@ -2659,7 +2650,6 @@ setInterval(function() {
   tgSelectNoneBtn.addEventListener('click', function() {
     for (var pair of tgCache) {
       mutedTGs.add(pair[0]);
-      if (engine) engine.setMute(pair[0], true);
       updateSpeakerIcon(parseInt(String(pair[0]).split(':').pop()));
     }
     saveSelectedState();
@@ -2669,13 +2659,7 @@ setInterval(function() {
   // ── Settings drawer: Audio controls ──
   setVolumeEl.addEventListener('input', function() {
     masterVol.value = setVolumeEl.value;
-    if (engine) engine.setMasterVolume(parseInt(setVolumeEl.value) / 100);
-    saveSettings();
-  });
-
-  setAutoPanEl.addEventListener('change', function() {
-    autoPanToggle.checked = setAutoPanEl.checked;
-    if (engine) engine.setAutoPan(setAutoPanEl.checked);
+    setVolume(setVolumeEl.value);
     saveSettings();
   });
 
@@ -2701,6 +2685,6 @@ setInterval(function() {
   }
 })();
 </script>
-<script src="theme-engine.js?v=2"></script>
+<script src="theme-engine.js"></script>
 </body>
 </html>
