@@ -1128,12 +1128,24 @@ const TYPE_LABELS = {
   'tones': 'Tones',
   'call-end': 'Call End',
 };
-// The type filter saved last time (null: all); applied as each type first appears.
-var _pendingTypeFilter = null;
+// The types unticked last time; applied as each type first appears. A type not in it
+// (one never seen before too) is shown.
+var _hiddenTypes = [];
+function getHiddenTypes() {
+  var hidden = [];
+  for (var key of typeFilterDropdown.items.keys()) {
+    if (!typeFilterDropdown.selected.has(key)) hidden.push(key);
+  }
+  // Keep the ones unticked in an earlier session that have not appeared yet in this one.
+  for (var i = 0; i < _hiddenTypes.length; i++) {
+    if (!typeFilterDropdown.items.has(_hiddenTypes[i]) && hidden.indexOf(_hiddenTypes[i]) === -1) hidden.push(_hiddenTypes[i]);
+  }
+  return hidden;
+}
 function ensureTypeItem(filterKey) {
   if (typeFilterDropdown.items.has(filterKey)) return;
   typeFilterDropdown.addItem(filterKey, TYPE_LABELS[filterKey] || filterKey);
-  if (_pendingTypeFilter && _pendingTypeFilter.indexOf(filterKey) === -1) {
+  if (_hiddenTypes.indexOf(filterKey) !== -1) {
     var sel = typeFilterDropdown.getSelected();
     sel.delete(filterKey);
     typeFilterDropdown.setSelected(sel);
@@ -1810,8 +1822,8 @@ function onSystemFilterChange() {
 
 // ── Type Filter ──
 function onTypeFilterChange() {
-  _pendingTypeFilter = typeFilterDropdown.isAllSelected() ? null : [...typeFilterDropdown.getSelected()];
-  localStorage.setItem('omni-type-filter', JSON.stringify(_pendingTypeFilter));
+  _hiddenTypes = getHiddenTypes();
+  localStorage.setItem('omni-type-hidden', JSON.stringify(_hiddenTypes));
   refilterActivityRows();
 }
 
@@ -1950,12 +1962,14 @@ function syncCalls() {
   }
 
   // Ends first, so a new call on the same channel takes the row over.
+  var holders = []; // ended calls whose row another call on the air holds
   for (var [id, prev] of liveCalls) {
     if (present.has(id)) continue;
     liveCalls.delete(id);
     // Another call on the air may hold the row (one row per talkgroup / per frequency).
     var held = viewMode === 'frequency' ? freqOnAir.has(prev.system_id + ':' + prev.freq) : tgOnAir.has(prev.system_id + ':' + prev.tgid);
     if (!held) removeActiveChannel(prev);
+    else holders.push(prev);
     var end = Object.assign({}, prev);
     end.time = Date.now();
     addActivityRow('call_end', end);
@@ -1979,13 +1993,33 @@ function syncCalls() {
     }
     if (!sameRow(before, data)) addActiveChannel(data);
   }
+
+  // A row an ended call shared with one still on the air: show the one on the air.
+  for (var h = 0; h < holders.length; h++) {
+    var ended = holders[h];
+    for (var live of liveCalls.values()) {
+      var same = viewMode === 'frequency' ? live.system_id === ended.system_id && live.freq === ended.freq
+                                          : live.system_id === ended.system_id && live.tgid === ended.tgid;
+      if (same) { addActiveChannel(live); break; }
+    }
+  }
 }
 
 // The recorder's notable events that are about radios and talkgroups. (The recorder
 // does not send raw registrations, affiliations or acknowledgements to interfaces.)
 const FEED_KINDS = { unitFirstSeen: true, unitActive: true, unitAffiliated: true, tgFirstSeen: true, tgActive: true, tonePattern: true };
 
+// The newest event time taken: a reconnect's greeting replays the recent events, and
+// those at or before it were shown already.
+var lastEventT = 0;
+
 function onMonitorEvent(m) {
+  if (m.t) {
+    // Before hello (rec.connected is false) these are the greeting's replay. Live events
+    // can share a time (several radios first heard on one call), so only the replay is cut.
+    if (!rec.connected && m.t <= lastEventT) return;
+    if (m.t > lastEventT) lastEventT = m.t;
+  }
   if (!FEED_KINDS[m.kind]) return;
   var sys = m.system || '';
   var base = {
@@ -2036,27 +2070,16 @@ function switchViewMode(newMode) {
   }
   channelsBody.appendChild(channelsEmpty);
 
+  // Rebuild from the calls on the air now (liveCalls): the other view's map was not kept
+  // up to date while this one was showing.
   if (newMode === 'frequency') {
     channelsHeader.textContent = 'Frequency Monitor';
-    // Seed freqChannels from any active calls that have freq
-    for (var entry of activeChannels.values()) {
-      if (entry.data.freq && !entry.fading) {
-        addActiveChannelFreqMode(entry.data);
-      }
-    }
+    freqChannels.clear();
+    for (var d of liveCalls.values()) addActiveChannelFreqMode(d);
   } else {
     channelsHeader.textContent = 'Active Voice Channels';
-    // Re-insert activeChannels rows
-    for (var entry of activeChannels.values()) {
-      if (!entry.fading) {
-        // Re-build row from scratch since we cleared DOM
-        while (entry.row.firstChild) entry.row.removeChild(entry.row.firstChild);
-        renderChannelRow(entry);
-        entry.elapsedCell = entry.row.querySelector('.elapsed-cell');
-        applyChannelSystemFilter(entry);
-        insertChannelSorted(entry.row, entry.data.tgid || 0);
-      }
-    }
+    activeChannels.clear();
+    for (var d of liveCalls.values()) addActiveChannel(d);
     // Clear freq map (will re-seed on next switch)
     freqChannels.clear();
   }
@@ -2166,7 +2189,7 @@ setInterval(function() {
       if (saved.bufferSize) { bufferSizeSelect.value = saved.bufferSize; setBufferSizeEl.value = saved.bufferSize; }
       if (Array.isArray(saved.systemFilter)) _pendingSystemRestore = saved.systemFilter;
       else if (typeof saved.systemFilter === 'string' && saved.systemFilter) _pendingSystemRestore = [saved.systemFilter]; // migrate legacy
-      if (Array.isArray(saved.typeFilter)) _pendingTypeFilter = saved.typeFilter; // applied as each type appears
+      if (Array.isArray(saved.typeHidden)) _hiddenTypes = saved.typeHidden; // applied as each type appears
       if (saved.listening) pendingListen = true;
       if (saved.viewMode === 'frequency') {
         // Defer switching until after DOM is ready — use setTimeout to avoid race
@@ -2197,7 +2220,7 @@ setInterval(function() {
         hiddenColumns: getHiddenColumns(),
         listening: listening,
         systemFilter: [...systemFilterDropdown.getSelected()],
-        typeFilter: typeFilterDropdown.isAllSelected() ? null : [...typeFilterDropdown.getSelected()],
+        typeHidden: getHiddenTypes(),
         viewMode: viewMode,
         panelSplit: pct
       };
@@ -2285,10 +2308,10 @@ setInterval(function() {
   }
 
   // Restore type filter from standalone key as fallback
-  if (!_pendingTypeFilter) {
+  if (!_hiddenTypes.length) {
     try {
-      var _tf = JSON.parse(localStorage.getItem('omni-type-filter'));
-      if (Array.isArray(_tf) && _tf.length > 0) _pendingTypeFilter = _tf;
+      var _tf = JSON.parse(localStorage.getItem('omni-type-hidden'));
+      if (Array.isArray(_tf) && _tf.length > 0) _hiddenTypes = _tf;
     } catch(e) {}
   }
 
@@ -2311,6 +2334,7 @@ setInterval(function() {
   // (the system filter and the mutes are applied to each chunk as it arrives).
   function getListenFilter() {
     var selected = [...systemFilterDropdown.getSelected()];
+    if (systemFilterDropdown.items.size > 0 && selected.length === 0) return false; // none: nothing to play
     if (!systemFilterDropdown.isAllSelected() && selected.length === 1) return { system: selected[0] };
     return {};
   }

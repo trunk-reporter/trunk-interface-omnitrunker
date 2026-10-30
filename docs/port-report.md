@@ -123,3 +123,42 @@ as the browser window could not be resized below its maximised 4K size.
   before publishing.
 - The interface's `repository` (github.com/trunk-reporter/trunk-interface-omnitrunker) does not
   exist yet; nothing was pushed.
+
+## Fixes after review
+
+Five fixes from the review, all in `index.html`:
+
+1. **The TG view went stale after time in FREQ (Important).** While FREQ showed, `activeChannels`
+   was never updated, so switching back showed the calls from before the switch, and a session
+   that started in FREQ had an empty TG view. `switchViewMode` now rebuilds the view it switches
+   to from `liveCalls` (the calls on the air): TG clears `activeChannels` and adds each live call;
+   FREQ seeds `freqChannels` from every live call, so a second call on one talkgroup is not lost.
+2. **A saved type filter hid types that arrived later (Important).** It was saved as the ticked
+   types (a whitelist), so any type first seen later was unticked. It is now saved as the
+   unticked types (`typeHidden` in `omni-settings`, `omni-type-hidden`), and a type not in that
+   list is shown. Unticked types that have not appeared yet in a session stay remembered.
+3. **The recent events replayed on every reconnect.** The greeting resends the recent
+   `monitorEvent`s. The page keeps the newest event time it has taken, and drops greeting events
+   (before `hello`, when `rec.connected` is false) at or before it. Live events are not cut,
+   because several can share one time (several radios first heard on one call).
+4. **A row could keep an ended call's data.** When a call ended while another call on the air
+   held its row (same talkgroup, or same frequency in FREQ), the row still showed the ended call.
+   It is now redrawn with the call that holds it.
+5. **No systems chosen still pulled all audio.** With the system filter at None, LISTEN now sends
+   `rec.listen(false)` instead of listening to everything and dropping every chunk.
+
+Also removed `docs/review-package.diff` (the reviewer's input; it was never committed).
+
+Re-tested in the browser at `http://127.0.0.1:8083/` against the live recorder:
+
+- **1:** TG showed 5 calls; switched to FREQ (5 rows), waited 25 s (25 frequency rows, ended
+  ones dimmed), switched back to TG. The TG view held 9 rows, none of the 5 from before the
+  switch, matching the talkgroups the recorder listed on the air at that moment (checked on a
+  separate connection; two talkgroups had two calls each, one row each). After the next `status`
+  every row's call id matched a call on the air.
+- **2:** Cleared storage, loaded the page, and unticked NEW UNIT as soon as the first types
+  appeared. Only NEW UNIT and NEW TG had been seen at that point, and the saved value was
+  `["new-unit"]`. After a reload, GRANT and CALL END (never seen before the untick) arrived ticked
+  and their rows showed. NEW UNIT stayed unticked and hidden, and the button read "3 types".
+- No console errors. Fixes 3 to 5 were checked by reading the code, not in the browser (a
+  reconnect needs the recorder restarted).
