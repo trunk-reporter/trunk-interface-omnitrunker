@@ -162,3 +162,20 @@ Re-tested in the browser at `http://127.0.0.1:8083/` against the live recorder:
   and their rows showed. NEW UNIT stayed unticked and hidden, and the button read "3 types".
 - No console errors. Fixes 3 to 5 were checked by reading the code, not in the browser (a
   reconnect needs the recorder restarted).
+
+### Round 2: the replay cut-off
+
+The first version of fix 3 compared greeting events against `lastEventT`, which the replay
+itself moved forward. So a replayed event sharing a time with the one before it was dropped,
+on first load too. Now the cut-off (`replayCut`) is taken once, from `lastEventT`, when the
+connection drops (`rec.on('connection', false)`), and greeting events are compared with that.
+`lastEventT` keeps advancing separately for the next drop. On the first connection the cut-off is
+0, so nothing is cut.
+
+Re-tested in the browser on port 8083 with cleared storage. I loaded the page into a same-origin
+frame with its WebSocket wrapped, to count the greeting's messages before `hello`, because `rec`
+is module-scoped and not reachable from the console. The greeting carried 200 `monitorEvent`s.
+66 of them were the kinds the feed shows (59 `unitFirstSeen`, 7 `tgFirstSeen`), and 5 of those
+shared a time with another. The feed had 66 rows of those kinds, so they matched. Then I closed
+the socket. The page reconnected (a second `hello`), and the feed still had the same number of
+those rows (67 before, 67 after), so nothing was replayed twice.

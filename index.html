@@ -2010,14 +2010,17 @@ function syncCalls() {
 const FEED_KINDS = { unitFirstSeen: true, unitActive: true, unitAffiliated: true, tgFirstSeen: true, tgActive: true, tonePattern: true };
 
 // The newest event time taken: a reconnect's greeting replays the recent events, and
-// those at or before it were shown already.
+// those at or before it were shown already. The cut-off is taken once, when the connection
+// drops, so the replay itself does not move it (the first connection cuts nothing).
 var lastEventT = 0;
+var replayCut = 0;
+rec.on('connection', function(up) { if (!up) replayCut = lastEventT; });
 
 function onMonitorEvent(m) {
   if (m.t) {
     // Before hello (rec.connected is false) these are the greeting's replay. Live events
     // can share a time (several radios first heard on one call), so only the replay is cut.
-    if (!rec.connected && m.t <= lastEventT) return;
+    if (!rec.connected && m.t <= replayCut) return;
     if (m.t > lastEventT) lastEventT = m.t;
   }
   if (!FEED_KINDS[m.kind]) return;
