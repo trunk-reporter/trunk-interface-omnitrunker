@@ -212,15 +212,18 @@
 
   /* ── Channel table column widths ── */
   #channels-table th:nth-child(1), #channels-table td:nth-child(1) { width: 4%; text-align: center; overflow: visible; }
-  #channels-table th:nth-child(2), #channels-table td:nth-child(2) { width: 12%; }
-  #channels-table th:nth-child(3), #channels-table td:nth-child(3) { width: 8%; }
-  #channels-table th:nth-child(4), #channels-table td:nth-child(4) { width: 6%; }
-  #channels-table th:nth-child(5), #channels-table td:nth-child(5) { width: 21%; }
-  #channels-table th:nth-child(6), #channels-table td:nth-child(6) { width: 7%; }
-  #channels-table th:nth-child(7), #channels-table td:nth-child(7) { width: 14%; }
-  #channels-table th:nth-child(8), #channels-table td:nth-child(8) { width: 6%; }
-  #channels-table th:nth-child(9), #channels-table td:nth-child(9) { width: 7%; }
-  #channels-table th:nth-child(10), #channels-table td:nth-child(10) { width: 9%; }
+  #channels-table th:nth-child(2), #channels-table td:nth-child(2) { width: 10%; }
+  #channels-table th:nth-child(3), #channels-table td:nth-child(3) { width: 12%; }
+  #channels-table th:nth-child(4), #channels-table td:nth-child(4) { width: 7%; }
+  #channels-table th:nth-child(5), #channels-table td:nth-child(5) { width: 5%; }
+  #channels-table th:nth-child(6), #channels-table td:nth-child(6) { width: 17%; }
+  #channels-table th:nth-child(7), #channels-table td:nth-child(7) { width: 6%; }
+  #channels-table th:nth-child(8), #channels-table td:nth-child(8) { width: 12%; }
+  #channels-table th:nth-child(9), #channels-table td:nth-child(9) { width: 6%; }
+  #channels-table th:nth-child(10), #channels-table td:nth-child(10) { width: 7%; }
+  #channels-table th:nth-child(11), #channels-table td:nth-child(11) { width: 8%; }
+  /* The other sites a call is heard on, after the one saved */
+  .site-also { color: var(--text-muted); }
 
   /* ── Activity table column widths ── */
   #activity-table th:nth-child(1), #activity-table td:nth-child(1) { width: 8%; }
@@ -621,11 +624,12 @@
   .tg-count { font-size: 11px; color: var(--text-faint); margin-bottom: 6px; }
 
   /* ── Column Visibility ── */
-  .hide-col-channel #channels-table th:nth-child(3), .hide-col-channel #channels-table td:nth-child(3) { display: none; }
-  .hide-col-source #channels-table th:nth-child(6), .hide-col-source #channels-table td:nth-child(6) { display: none; }
-  .hide-col-unit-alias #channels-table th:nth-child(7), .hide-col-unit-alias #channels-table td:nth-child(7) { display: none; }
-  .hide-col-mode #channels-table th:nth-child(9), .hide-col-mode #channels-table td:nth-child(9) { display: none; }
-  .hide-col-encryption #channels-table th:nth-child(10), .hide-col-encryption #channels-table td:nth-child(10) { display: none; }
+  .hide-col-site #channels-table th:nth-child(3), .hide-col-site #channels-table td:nth-child(3) { display: none; }
+  .hide-col-channel #channels-table th:nth-child(4), .hide-col-channel #channels-table td:nth-child(4) { display: none; }
+  .hide-col-source #channels-table th:nth-child(7), .hide-col-source #channels-table td:nth-child(7) { display: none; }
+  .hide-col-unit-alias #channels-table th:nth-child(8), .hide-col-unit-alias #channels-table td:nth-child(8) { display: none; }
+  .hide-col-mode #channels-table th:nth-child(10), .hide-col-mode #channels-table td:nth-child(10) { display: none; }
+  .hide-col-encryption #channels-table th:nth-child(11), .hide-col-encryption #channels-table td:nth-child(11) { display: none; }
 
   /* ── Volume slider in settings ── */
   .settings-vol-slider {
@@ -753,10 +757,10 @@
     /* Hide Speaker, Mode and Encryption columns in Active Voice Channels */
     #channels-table th:nth-child(1),
     #channels-table td:nth-child(1),
-    #channels-table th:nth-child(9),
-    #channels-table td:nth-child(9),
     #channels-table th:nth-child(10),
-    #channels-table td:nth-child(10) { display: none; }
+    #channels-table td:nth-child(10),
+    #channels-table th:nth-child(11),
+    #channels-table td:nth-child(11) { display: none; }
     /* Hide Site column in Unit Activity */
     #activity-table th:nth-child(3),
     #activity-table td:nth-child(3) { display: none; }
@@ -800,6 +804,7 @@
           <tr>
             <th title="Audio"></th>
             <th>System</th>
+            <th>Site</th>
             <th>Channel</th>
             <th>TG</th>
             <th>Alpha Tag</th>
@@ -811,7 +816,7 @@
           </tr>
         </thead>
         <tbody id="channels-body">
-          <tr id="channels-empty"><td colspan="10" class="empty-state">Waiting for active calls...</td></tr>
+          <tr id="channels-empty"><td colspan="11" class="empty-state">Waiting for active calls...</td></tr>
         </tbody>
       </table>
     </div>
@@ -880,6 +885,14 @@
     </div>
     <div class="settings-group">
       <div class="settings-group-title">Display</div>
+      <div class="settings-row">
+        <div class="settings-label">Show Site column</div>
+        <label class="toggle">
+          <input type="checkbox" id="col-site" checked data-col="site">
+          <span class="toggle-track"></span>
+          <span class="toggle-thumb"></span>
+        </label>
+      </div>
       <div class="settings-row">
         <div class="settings-label">Show Channel column</div>
         <label class="toggle">
@@ -1329,6 +1342,25 @@ function speakerTitle(muted, encrypted) {
   return muted ? 'Muted. Click to unmute' : 'Playing. Click to mute';
 }
 
+// The Site cell: the site the call is saved from, then " +N" (muted) when the recorder hears it
+// on other sites too, with those sites in the cell's title.
+function fillSiteCell(td, d) {
+  var also = d.also_on || [];
+  var key = (d.site || '') + '|' + also.join('|');
+  if (td.dataset.siteKey === key) return;
+  td.dataset.siteKey = key;
+  td.textContent = d.site || '';
+  if (also.length) {
+    var more = document.createElement('span');
+    more.className = 'site-also';
+    more.textContent = ' +' + also.length;
+    td.appendChild(more);
+    td.title = 'also on ' + also.join(', ');
+  } else {
+    td.removeAttribute('title');
+  }
+}
+
 function buildChannelCells(d, entry) {
   // Build cells using DOM methods for XSS safety
   const freq = d.freq ? (d.freq / 1e6).toFixed(4) : '';
@@ -1361,6 +1393,11 @@ function buildChannelCells(d, entry) {
   const c0 = document.createElement('td');
   c0.textContent = getSystemName(d);
   cells.push(c0);
+
+  // Site
+  const cSite = document.createElement('td');
+  fillSiteCell(cSite, d);
+  cells.push(cSite);
 
   // Channel (freq)
   const c1 = document.createElement('td');
@@ -1579,7 +1616,7 @@ function renderChannelRow(entry) {
   // Subsequent renders: update changed cells in-place (skip full teardown)
   const ch = row.children;
   const encrypted = d.encrypted === true;
-  if (ch.length < 10) {
+  if (ch.length < 11) {
     // Fallback: full rebuild if unexpected structure
     while (row.firstChild) row.removeChild(row.firstChild);
     const cells = buildChannelCells(d, entry);
@@ -1599,36 +1636,38 @@ function renderChannelRow(entry) {
   // col 1 (system) - rarely changes
   var sysName = getSystemName(d);
   if (ch[1].textContent !== sysName) ch[1].textContent = sysName;
-  // col 2 (freq)
+  // col 2 (site, and the other sites it is heard on)
+  fillSiteCell(ch[2], d);
+  // col 3 (freq)
   var freq = d.freq ? (d.freq / 1e6).toFixed(4) : '';
-  if (ch[2].textContent !== freq) ch[2].textContent = freq;
-  // col 3 (tgid)
+  if (ch[3].textContent !== freq) ch[3].textContent = freq;
+  // col 4 (tgid)
   var tgStr = d.tgid != null ? String(d.tgid) : '';
-  if (ch[3].textContent !== tgStr) ch[3].textContent = tgStr;
-  // col 4 (alpha tag)
+  if (ch[4].textContent !== tgStr) ch[4].textContent = tgStr;
+  // col 5 (alpha tag)
   var alpha = d.tg_alpha_tag || '';
-  if (ch[4].textContent !== alpha) ch[4].textContent = alpha;
-  // col 5 (source unit)
+  if (ch[5].textContent !== alpha) ch[5].textContent = alpha;
+  // col 6 (source unit)
   var unitStr = d.unit != null ? String(d.unit) : '';
-  var unitSpan = ch[5].querySelector('.val');
+  var unitSpan = ch[6].querySelector('.val');
   if (unitSpan && unitSpan.textContent !== unitStr) unitSpan.textContent = unitStr;
-  // col 6 (unit alias)
+  // col 7 (unit alias)
   var unitAlias = d.unit_alpha_tag || '';
-  if (ch[6].textContent !== unitAlias) ch[6].textContent = unitAlias;
-  // col 7 (elapsed) - handled by timer
-  // col 8 (mode)
+  if (ch[7].textContent !== unitAlias) ch[7].textContent = unitAlias;
+  // col 8 (elapsed) - handled by timer
+  // col 9 (mode)
   var mode = mapAudioType(d.audio_type);
-  if (ch[8].textContent !== mode) ch[8].textContent = mode;
-  // col 9 (encryption): a call can turn out encrypted after it starts
-  var hasBadge = !!ch[9].firstChild;
+  if (ch[9].textContent !== mode) ch[9].textContent = mode;
+  // col 10 (encryption): a call can turn out encrypted after it starts
+  var hasBadge = !!ch[10].firstChild;
   if (encrypted !== hasBadge) {
-    ch[9].textContent = '';
+    ch[10].textContent = '';
     if (encrypted) {
       var badge = document.createElement('span');
       badge.className = 'encrypted-badge';
       badge.textContent = 'ENCRYPTED';
       badge.dataset.short = 'ENC';
-      ch[9].appendChild(badge);
+      ch[10].appendChild(badge);
     }
   }
 }
@@ -1916,6 +1955,8 @@ function callToData(c, prev) {
     system_id: sys,
     system_name: systemNames.get(sys) || sys,
     site: c.site || '',
+    // The other sites the recorder hears this call on (one copy is saved).
+    also_on: (c.alsoOn || []).slice(),
     tgid: c.talkgroup,
     tg_alpha_tag: c.alphaTag || tgMeta(sys, c.talkgroup).alpha_tag || '',
     freq: c.freqHz,
@@ -1946,7 +1987,8 @@ const liveCalls = new Map();
 
 function sameRow(a, b) {
   return a.unit === b.unit && a.unit_alpha_tag === b.unit_alpha_tag && a.tg_alpha_tag === b.tg_alpha_tag &&
-    a.encrypted === b.encrypted && a.emergency === b.emergency && a.freq === b.freq && a.audio_type === b.audio_type;
+    a.encrypted === b.encrypted && a.emergency === b.emergency && a.freq === b.freq && a.audio_type === b.audio_type &&
+    a.site === b.site && a.also_on.join('|') === b.also_on.join('|');
 }
 
 function syncCalls() {
