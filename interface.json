@@ -6,5 +6,11 @@
   "api": 1,
   "access": "listen",
   "license": "MIT",
-  "repository": "https://github.com/trunk-reporter/trunk-interface-omnitrunker"
+  "repository": "https://github.com/trunk-reporter/trunk-interface-omnitrunker",
+  "screenshots": [
+    {
+      "path": "screenshots/wall.png",
+      "caption": "Calls on the air and the activity feed"
+    }
+  ]
 }
