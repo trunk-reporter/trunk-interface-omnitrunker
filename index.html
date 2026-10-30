@@ -212,16 +212,17 @@
 
   /* ── Channel table column widths ── */
   #channels-table th:nth-child(1), #channels-table td:nth-child(1) { width: 4%; text-align: center; overflow: visible; }
-  #channels-table th:nth-child(2), #channels-table td:nth-child(2) { width: 10%; }
-  #channels-table th:nth-child(3), #channels-table td:nth-child(3) { width: 12%; }
-  #channels-table th:nth-child(4), #channels-table td:nth-child(4) { width: 7%; }
-  #channels-table th:nth-child(5), #channels-table td:nth-child(5) { width: 5%; }
-  #channels-table th:nth-child(6), #channels-table td:nth-child(6) { width: 17%; }
-  #channels-table th:nth-child(7), #channels-table td:nth-child(7) { width: 6%; }
-  #channels-table th:nth-child(8), #channels-table td:nth-child(8) { width: 12%; }
-  #channels-table th:nth-child(9), #channels-table td:nth-child(9) { width: 6%; }
-  #channels-table th:nth-child(10), #channels-table td:nth-child(10) { width: 7%; }
-  #channels-table th:nth-child(11), #channels-table td:nth-child(11) { width: 8%; }
+  #channels-table th:nth-child(2), #channels-table td:nth-child(2) { width: 4%; text-align: center; overflow: visible; }
+  #channels-table th:nth-child(3), #channels-table td:nth-child(3) { width: 10%; }
+  #channels-table th:nth-child(4), #channels-table td:nth-child(4) { width: 12%; }
+  #channels-table th:nth-child(5), #channels-table td:nth-child(5) { width: 7%; }
+  #channels-table th:nth-child(6), #channels-table td:nth-child(6) { width: 5%; }
+  #channels-table th:nth-child(7), #channels-table td:nth-child(7) { width: 15%; }
+  #channels-table th:nth-child(8), #channels-table td:nth-child(8) { width: 6%; }
+  #channels-table th:nth-child(9), #channels-table td:nth-child(9) { width: 11%; }
+  #channels-table th:nth-child(10), #channels-table td:nth-child(10) { width: 6%; }
+  #channels-table th:nth-child(11), #channels-table td:nth-child(11) { width: 6%; }
+  #channels-table th:nth-child(12), #channels-table td:nth-child(12) { width: 8%; }
   /* The other sites a call is heard on, after the one saved */
   .site-also { color: var(--text-muted); }
 
@@ -387,6 +388,32 @@
     position: absolute; right: -5px; bottom: -4px;
     font-size: 9px; line-height: 1;
     filter: drop-shadow(0 0 1px var(--bg-tile));
+  }
+
+  /* ── Pan Indicator (L/R column) ── */
+  .pan-indicator {
+    display: inline-block;
+    width: 33px; height: 6px;
+    background: var(--bg-surface);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    position: relative;
+    vertical-align: middle;
+  }
+  .pan-indicator .pan-dot {
+    position: absolute;
+    top: 0px;
+    width: 4px; height: 4px;
+    background: var(--accent);
+    border-radius: 50%;
+    transition: left 0.2s ease;
+  }
+  .pan-indicator .pan-center {
+    position: absolute;
+    top: 0; bottom: 0;
+    left: 50%;
+    width: 1px;
+    background: var(--border);
   }
 
   /* ── Audio Glow on Active Rows ── */
@@ -624,12 +651,13 @@
   .tg-count { font-size: 11px; color: var(--text-faint); margin-bottom: 6px; }
 
   /* ── Column Visibility ── */
-  .hide-col-site #channels-table th:nth-child(3), .hide-col-site #channels-table td:nth-child(3) { display: none; }
-  .hide-col-channel #channels-table th:nth-child(4), .hide-col-channel #channels-table td:nth-child(4) { display: none; }
-  .hide-col-source #channels-table th:nth-child(7), .hide-col-source #channels-table td:nth-child(7) { display: none; }
-  .hide-col-unit-alias #channels-table th:nth-child(8), .hide-col-unit-alias #channels-table td:nth-child(8) { display: none; }
-  .hide-col-mode #channels-table th:nth-child(10), .hide-col-mode #channels-table td:nth-child(10) { display: none; }
-  .hide-col-encryption #channels-table th:nth-child(11), .hide-col-encryption #channels-table td:nth-child(11) { display: none; }
+  .hide-col-pan #channels-table th:nth-child(2), .hide-col-pan #channels-table td:nth-child(2) { display: none; }
+  .hide-col-site #channels-table th:nth-child(4), .hide-col-site #channels-table td:nth-child(4) { display: none; }
+  .hide-col-channel #channels-table th:nth-child(5), .hide-col-channel #channels-table td:nth-child(5) { display: none; }
+  .hide-col-source #channels-table th:nth-child(8), .hide-col-source #channels-table td:nth-child(8) { display: none; }
+  .hide-col-unit-alias #channels-table th:nth-child(9), .hide-col-unit-alias #channels-table td:nth-child(9) { display: none; }
+  .hide-col-mode #channels-table th:nth-child(11), .hide-col-mode #channels-table td:nth-child(11) { display: none; }
+  .hide-col-encryption #channels-table th:nth-child(12), .hide-col-encryption #channels-table td:nth-child(12) { display: none; }
 
   /* ── Volume slider in settings ── */
   .settings-vol-slider {
@@ -757,10 +785,10 @@
     /* Hide Speaker, Mode and Encryption columns in Active Voice Channels */
     #channels-table th:nth-child(1),
     #channels-table td:nth-child(1),
-    #channels-table th:nth-child(10),
-    #channels-table td:nth-child(10),
     #channels-table th:nth-child(11),
-    #channels-table td:nth-child(11) { display: none; }
+    #channels-table td:nth-child(11),
+    #channels-table th:nth-child(12),
+    #channels-table td:nth-child(12) { display: none; }
     /* Hide Site column in Unit Activity */
     #activity-table th:nth-child(3),
     #activity-table td:nth-child(3) { display: none; }
@@ -787,6 +815,9 @@
   </button>
   <div class="audio-controls" id="audio-controls">
     <input type="range" class="vol-slider" id="master-vol" min="0" max="100" value="80" title="Volume">
+    <label style="font-size:10px;color:var(--text-muted);display:flex;align-items:center;gap:3px;cursor:pointer" title="Auto-spread channels across stereo field">
+      <input type="checkbox" id="auto-pan-toggle" checked style="margin:0"> Pan
+    </label>
     <span class="audio-status" id="audio-status">--</span>
   </div>
   <button class="gear-btn" id="settings-btn" title="Settings">&#9881;</button>
@@ -803,6 +834,7 @@
         <thead>
           <tr>
             <th title="Audio"></th>
+            <th title="Pan">L/R</th>
             <th>System</th>
             <th>Site</th>
             <th>Channel</th>
@@ -816,7 +848,7 @@
           </tr>
         </thead>
         <tbody id="channels-body">
-          <tr id="channels-empty"><td colspan="11" class="empty-state">Waiting for active calls...</td></tr>
+          <tr id="channels-empty"><td colspan="12" class="empty-state">Waiting for active calls...</td></tr>
         </tbody>
       </table>
     </div>
@@ -882,9 +914,28 @@
         <div class="settings-label">Master Volume</div>
         <input type="range" class="settings-vol-slider" id="set-volume" min="0" max="100" value="80">
       </div>
+      <div class="settings-row">
+        <div>
+          <div class="settings-label">Auto-pan</div>
+          <div class="settings-sublabel">Spread channels across stereo field</div>
+        </div>
+        <label class="toggle">
+          <input type="checkbox" id="set-auto-pan" checked>
+          <span class="toggle-track"></span>
+          <span class="toggle-thumb"></span>
+        </label>
+      </div>
     </div>
     <div class="settings-group">
       <div class="settings-group-title">Display</div>
+      <div class="settings-row">
+        <div class="settings-label">Show L/R column</div>
+        <label class="toggle">
+          <input type="checkbox" id="col-pan" checked data-col="pan">
+          <span class="toggle-track"></span>
+          <span class="toggle-thumb"></span>
+        </label>
+      </div>
       <div class="settings-row">
         <div class="settings-label">Show Site column</div>
         <label class="toggle">
@@ -1346,6 +1397,26 @@ function speakerTitle(muted, encrypted) {
   return muted ? 'Muted. Click to unmute' : 'Playing. Click to mute';
 }
 
+// Auto-pan: each talkgroup at its own spot in the stereo field (tr-engine's audio-engine.js), the
+// same for the call's player and its row's L/R dot; off, everything in the middle.
+let autoPan = true;
+function panFor(tgid) {
+  if (!autoPan) return 0;
+  var h = ((Number(tgid) * 2654435761) >>> 0) % 10000;
+  return -0.8 + (h / 10000) * 1.6;
+}
+function setPanDot(dot, tgid) {
+  var left = (((panFor(tgid) + 1) / 2) * 29).toFixed(1) + 'px';
+  if (dot.style.left !== left) dot.style.left = left;
+}
+function updateAllPanDots() {
+  var rows = channelsBody.querySelectorAll('.channel-row');
+  for (var i = 0; i < rows.length; i++) {
+    var dot = rows[i].querySelector('.pan-dot');
+    if (dot) setPanDot(dot, rows[i].dataset.tgid);
+  }
+}
+
 // The Site cell: the site the call is saved from, then " +N" (muted) when the recorder hears it
 // on other sites too, with those sites in the cell's title.
 function fillSiteCell(td, d) {
@@ -1392,6 +1463,21 @@ function buildChannelCells(d, entry) {
     cSpk.appendChild(spk);
   }
   cells.push(cSpk);
+
+  // L/R: where the talkgroup sits in the stereo field
+  const cPan = document.createElement('td');
+  cPan.className = 'pan-cell';
+  const panBar = document.createElement('span');
+  panBar.className = 'pan-indicator';
+  const panCenter = document.createElement('span');
+  panCenter.className = 'pan-center';
+  panBar.appendChild(panCenter);
+  const panDot = document.createElement('span');
+  panDot.className = 'pan-dot';
+  setPanDot(panDot, d.tgid);
+  panBar.appendChild(panDot);
+  cPan.appendChild(panBar);
+  cells.push(cPan);
 
   // System
   const c0 = document.createElement('td');
@@ -1620,7 +1706,7 @@ function renderChannelRow(entry) {
   // Subsequent renders: update changed cells in-place (skip full teardown)
   const ch = row.children;
   const encrypted = d.encrypted === true;
-  if (ch.length < 11) {
+  if (ch.length < 12) {
     // Fallback: full rebuild if unexpected structure
     while (row.firstChild) row.removeChild(row.firstChild);
     const cells = buildChannelCells(d, entry);
@@ -1637,41 +1723,44 @@ function renderChannelRow(entry) {
     spk.classList.toggle('encrypted', encrypted);
     spk.title = speakerTitle(isMuted, encrypted);
   }
-  // col 1 (system) - rarely changes
+  // col 1 (L/R): a FREQ row can change talkgroup
+  var panDot = ch[1].querySelector('.pan-dot');
+  if (panDot) setPanDot(panDot, d.tgid);
+  // col 2 (system) - rarely changes
   var sysName = getSystemName(d);
-  if (ch[1].textContent !== sysName) ch[1].textContent = sysName;
-  // col 2 (site, and the other sites it is heard on)
-  fillSiteCell(ch[2], d);
-  // col 3 (freq)
+  if (ch[2].textContent !== sysName) ch[2].textContent = sysName;
+  // col 3 (site, and the other sites it is heard on)
+  fillSiteCell(ch[3], d);
+  // col 4 (freq)
   var freq = d.freq ? (d.freq / 1e6).toFixed(4) : '';
-  if (ch[3].textContent !== freq) ch[3].textContent = freq;
-  // col 4 (tgid)
+  if (ch[4].textContent !== freq) ch[4].textContent = freq;
+  // col 5 (tgid)
   var tgStr = d.tgid != null ? String(d.tgid) : '';
-  if (ch[4].textContent !== tgStr) ch[4].textContent = tgStr;
-  // col 5 (alpha tag)
+  if (ch[5].textContent !== tgStr) ch[5].textContent = tgStr;
+  // col 6 (alpha tag)
   var alpha = d.tg_alpha_tag || '';
-  if (ch[5].textContent !== alpha) ch[5].textContent = alpha;
-  // col 6 (source unit)
+  if (ch[6].textContent !== alpha) ch[6].textContent = alpha;
+  // col 7 (source unit)
   var unitStr = d.unit != null ? String(d.unit) : '';
-  var unitSpan = ch[6].querySelector('.val');
+  var unitSpan = ch[7].querySelector('.val');
   if (unitSpan && unitSpan.textContent !== unitStr) unitSpan.textContent = unitStr;
-  // col 7 (unit alias)
+  // col 8 (unit alias)
   var unitAlias = d.unit_alpha_tag || '';
-  if (ch[7].textContent !== unitAlias) ch[7].textContent = unitAlias;
-  // col 8 (elapsed) - handled by timer
-  // col 9 (mode)
+  if (ch[8].textContent !== unitAlias) ch[8].textContent = unitAlias;
+  // col 9 (elapsed) - handled by timer
+  // col 10 (mode)
   var mode = mapAudioType(d.audio_type);
-  if (ch[9].textContent !== mode) ch[9].textContent = mode;
-  // col 10 (encryption): a call can turn out encrypted after it starts
-  var hasBadge = !!ch[10].firstChild;
+  if (ch[10].textContent !== mode) ch[10].textContent = mode;
+  // col 11 (encryption): a call can turn out encrypted after it starts
+  var hasBadge = !!ch[11].firstChild;
   if (encrypted !== hasBadge) {
-    ch[10].textContent = '';
+    ch[11].textContent = '';
     if (encrypted) {
       var badge = document.createElement('span');
       badge.className = 'encrypted-badge';
       badge.textContent = 'ENCRYPTED';
       badge.dataset.short = 'ENC';
-      ch[10].appendChild(badge);
+      ch[11].appendChild(badge);
     }
   }
 }
@@ -1988,6 +2077,8 @@ function talkerData(data, unit) {
 
 // The calls on the air last time: CallView.id (as text) -> data.
 const liveCalls = new Map();
+// Told the id (as text) of each call that leaves the air (the audio drops its player).
+let onCallEnded = null;
 
 function sameRow(a, b) {
   return a.unit === b.unit && a.unit_alpha_tag === b.unit_alpha_tag && a.tg_alpha_tag === b.tg_alpha_tag &&
@@ -2012,6 +2103,7 @@ function syncCalls() {
   for (var [id, prev] of liveCalls) {
     if (present.has(id)) continue;
     liveCalls.delete(id);
+    if (onCallEnded) onCallEnded(id);
     // Another call on the air may hold the row (one row per talkgroup / per frequency).
     var held = viewMode === 'frequency' ? freqOnAir.has(prev.system_id + ':' + prev.freq) : tgOnAir.has(prev.system_id + ':' + prev.tgid);
     if (!held) removeActiveChannel(prev);
@@ -2186,12 +2278,19 @@ setInterval(function() {
   const audioControls = document.getElementById('audio-controls');
   const masterVol = document.getElementById('master-vol');
   const audioStatusEl = document.getElementById('audio-status');
+  const autoPanToggle = document.getElementById('auto-pan-toggle');
+  const setAutoPanEl = document.getElementById('set-auto-pan');
 
-  // Plays the recorder's live audio: one call at a time, the first heard, until it goes quiet
-  // (LivePlayer has no stereo pan, so tr-engine's auto-pan is not carried over).
-  const player = new LivePlayer();
+  // Plays the recorder's live audio: every call on the air at once, one LivePlayer per call,
+  // each panned to its talkgroup's spot, all mixed into one AudioContext made on the LISTEN click.
+  let sharedCtx = null;
+  // callId (as text) -> { player, talkgroup, system (short name), quietSince (ms, 0 while playing) }
+  const players = new Map();
+  let currentGain = 2;
   let listening = false;
-  // The talkgroups heard playing lately: tgid -> when (ms), for the row glow and the status.
+  // A player whose call has been quiet this long (past its own quietS) is dropped.
+  const PLAYER_IDLE_MS = 5000;
+  // The talkgroups heard playing lately: tgid -> when (ms), for the row glow.
   const audibleTGs = new Map();
   // Every talkgroup plays unless it is in here ("shortName:tgid" composite keys).
   const mutedTGs = new Set();
@@ -2230,6 +2329,7 @@ setInterval(function() {
     try {
       var saved = JSON.parse(localStorage.getItem('omni-settings') || '{}');
       if (saved.volume != null) { masterVol.value = saved.volume; setVolumeEl.value = saved.volume; }
+      if (saved.autoPan === false) { autoPan = false; autoPanToggle.checked = false; setAutoPanEl.checked = false; }
       if (Array.isArray(saved.muted)) {
         saved.muted.forEach(function(t) { mutedTGs.add(String(t)); });
       }
@@ -2271,11 +2371,13 @@ setInterval(function() {
         viewMode: viewMode,
         panelSplit: pct
       };
+      if (!autoPan) obj.autoPan = false; // on is the default
       localStorage.setItem('omni-settings', JSON.stringify(obj));
     } catch (e) {}
   }
 
   function saveSelectedState() {
+    dropUnwantedPlayers();
     saveSettings();
     updateTGCount();
     updateTGListChecks();
@@ -2386,31 +2488,71 @@ setInterval(function() {
     return {};
   }
 
-  // The master volume (0-100) -> the player's gain: 80, the default, is the player's own 2.
-  // LivePlayer has no volume setter: its gain is read when its output is made, and its gain
-  // node (_gain) is set directly while playing.
+  // The master volume (0-100) -> the players' gain: 80, the default, is the player's own 2.
   function setVolume(v) {
-    var g = 2.5 * (parseInt(v) || 0) / 100;
-    player.gainValue = g;
-    if (player._gain) player._gain.gain.value = g;
+    currentGain = 2.5 * (parseInt(v) || 0) / 100;
+    for (var p of players.values()) p.player.setGain(currentGain);
   }
+
+  // Auto-pan on or off: both checkboxes, every live player and every row's dot.
+  function setAutoPan(on) {
+    autoPan = !!on;
+    autoPanToggle.checked = autoPan;
+    setAutoPanEl.checked = autoPan;
+    for (var p of players.values()) p.player.setPan(panFor(p.talkgroup));
+    updateAllPanDots();
+    saveSettings();
+  }
+
+  function dropPlayer(callId) {
+    var p = players.get(callId);
+    if (!p) return;
+    p.player.stop(); // with the shared context: just this player's nodes
+    players.delete(callId);
+  }
+
+  // Players the listener no longer wants: a muted talkgroup, a system filtered out.
+  function dropUnwantedPlayers() {
+    for (var pair of Array.from(players)) {
+      var p = pair[1];
+      if (mutedTGs.has(p.system + ':' + p.talkgroup) || !systemFilterDropdown.matchesValue(p.system)) dropPlayer(pair[0]);
+    }
+  }
+
+  // A call that leaves the air takes its player with it.
+  onCallEnded = dropPlayer;
 
   // ── Live audio lifecycle ──
   rec.on('audio', function(chunk) {
-    if (!listening) return;
+    if (!listening || !sharedCtx) return;
     var sys = systemName(rec.status, chunk.system);
     if (!systemFilterDropdown.matchesValue(sys)) return;
     if (mutedTGs.has(sys + ':' + chunk.talkgroup)) return;
-    player.play(chunk);
-    if (player.nowPlaying && player.nowPlaying.callId === chunk.callId) audibleTGs.set(chunk.talkgroup, Date.now());
+    var id = String(chunk.callId);
+    var p = players.get(id);
+    if (!p) {
+      // With a client.js that takes `context`, every player mixes into the shared one (already
+      // running); with one that does not, each makes its own on resume(), which the browser lets
+      // start after the LISTEN click.
+      var player = new LivePlayer({ followCall: false, gain: currentGain, pan: panFor(chunk.talkgroup), context: sharedCtx });
+      p = { player: player, talkgroup: chunk.talkgroup, system: sys, quietSince: 0 };
+      players.set(id, p);
+      player.resume().catch(function() {});
+    }
+    p.player.play(chunk);
+    audibleTGs.set(chunk.talkgroup, Date.now());
   });
 
   async function startListening() {
     if (listening) return;
     setVolume(masterVol.value);
     try {
-      await player.resume(); // after the click: browsers only start sound then
+      // Made in the click (a user gesture): browsers only start sound then.
+      sharedCtx = new AudioContext();
+      await sharedCtx.resume();
     } catch (e) {
+      if (sharedCtx) sharedCtx.close().catch(function() {});
+      sharedCtx = null;
       setAudioStatus('error');
       return;
     }
@@ -2426,7 +2568,9 @@ setInterval(function() {
 
   function stopListening() {
     rec.listen(false);
-    player.stop();
+    for (var id of Array.from(players.keys())) dropPlayer(id);
+    if (sharedCtx) sharedCtx.close().catch(function() {});
+    sharedCtx = null;
     audibleTGs.clear();
     listening = false;
     listenToggle.classList.remove('active');
@@ -2461,6 +2605,10 @@ setInterval(function() {
     saveSettings();
   });
 
+  // ── Auto-pan (toolbar Pan checkbox and the drawer's Auto-pan, kept in step) ──
+  autoPanToggle.addEventListener('change', function() { setAutoPan(autoPanToggle.checked); });
+  setAutoPanEl.addEventListener('change', function() { setAutoPan(setAutoPanEl.checked); });
+
   // ── Highlight channel rows with active audio ──
   function highlightAudioTG(tgid, active) {
     var map = viewMode === 'frequency' ? freqChannels : activeChannels;
@@ -2479,6 +2627,30 @@ setInterval(function() {
     // The system filter changed: ask the recorder again (one system, or everything).
     onSystemFilterChange: function() {
       if (listening) rec.listen(getListenFilter());
+      dropUnwantedPlayers();
+    },
+    // For checking in a console: the players and the shared output.
+    debug: function() {
+      return {
+        listening: listening,
+        contextState: sharedCtx ? sharedCtx.state : null,
+        gain: currentGain,
+        autoPan: autoPan,
+        players: Array.from(players).map(function(pair) {
+          var pl = pair[1].player;
+          return {
+            callId: pair[0],
+            talkgroup: pair[1].talkgroup,
+            system: pair[1].system,
+            pan: pl.panValue,
+            gain: pl.gainValue,
+            nowPlaying: pl.nowPlaying,
+            // diagnostic only: whether it plays into the shared context or one of its own
+            sharedContext: !!sharedCtx && pl._ctx === sharedCtx,
+            ownContextState: pl._ctx && pl._ctx !== sharedCtx ? pl._ctx.state : null,
+          };
+        }),
+      };
     },
     toggleMute: function(tgid, systemId) {
       // Toggle all composite keys matching this tgid
@@ -2518,7 +2690,6 @@ setInterval(function() {
 
     // Batch all DOM writes into one rAF
     requestAnimationFrame(function() {
-      var voiceCount = 0;
       var channelMap = viewMode === 'frequency' ? freqChannels : activeChannels;
       for (var entry of channelMap.values()) {
         if (entry.fading) continue;
@@ -2544,17 +2715,18 @@ setInterval(function() {
           }
           if (hasVoice) {
             entry.lastAudioTime = now;
-            voiceCount++;
           }
         }
       }
 
-      // Status text (skip if unchanged)
+      // Status text (skip if unchanged): the players playing a call now
       if (tgActivity) {
+        var playing = 0;
+        for (var p of players.values()) if (p.player.nowPlaying) playing++;
         var mutedCount = mutedTGs.size;
         var mutedNote = mutedCount > 0 ? ' (' + mutedCount + ' muted)' : '';
-        if (voiceCount > 0) {
-          setAudioStatus(voiceCount + ' active' + mutedNote, 'streaming');
+        if (playing > 0) {
+          setAudioStatus(playing + ' playing' + mutedNote, 'streaming');
         } else {
           setAudioStatus('idle' + mutedNote, '');
         }
@@ -2562,6 +2734,13 @@ setInterval(function() {
     });
 
     if (doElapsed) lastElapsedTick = now;
+
+    // Safety net: a player quiet for a while goes (its call's end normally takes it first).
+    for (var pp of Array.from(players)) {
+      if (pp[1].player.nowPlaying) { pp[1].quietSince = 0; continue; }
+      if (!pp[1].quietSince) pp[1].quietSince = now;
+      else if (now - pp[1].quietSince > PLAYER_IDLE_MS) dropPlayer(pp[0]);
+    }
 
     // Forget talkgroups not heard for 30 s
     for (var pair of audibleTGs) {
