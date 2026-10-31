@@ -1,7 +1,7 @@
 {
   "id": "omnitrunker",
   "name": "OmniTrunker",
-  "version": "0.2.0",
+  "version": "0.2.1",
   "description": "Live voice channels and unit activity, dispatch-wall style, with per-talkgroup listening.",
   "api": 1,
   "access": "listen",

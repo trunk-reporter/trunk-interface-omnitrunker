@@ -29,7 +29,7 @@ with the same look, layout, behaviour and themes, fed by the recorder's own API.
   calls can be told apart. The speaker icon on a row mutes
   that talkgroup; the settings drawer (the gear) has the whole talkgroup list to search, mute and
   unmute, the master volume, and which columns to show.
-- The theme picker at the top right switches between the themes (Ctrl+Shift+T cycles them).
+- The theme picker at the top right switches between the themes (Ctrl+Shift+T cycles them; `?theme=matrix` in the address picks one, kept like a pick). Your own themes go in a `theme-local.js` beside `index.html`, which an upgrade never touches; [theme-local.example.js](https://github.com/trunk-reporter/trp-themes/blob/main/theme-local.example.js) is one to copy. The themes are [trp-themes](https://github.com/trunk-reporter/trp-themes) 1.0.0's, pared to the variables this page uses, with the default written into the page so it is styled before (or without) the engine; `node pare.mjs <this folder>` there refreshes them.
 
 Settings are kept in the browser, per recorder.
 

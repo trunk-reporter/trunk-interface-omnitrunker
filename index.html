@@ -17,6 +17,34 @@
 <script src="theme-config.js"></script>
 
 <style>
+/* trp-themes: the default theme (Apple Glass), by trp-themes 1.0.0's pare.mjs: the page's look before theme-engine.js
+   runs, or without it. Don't edit it here; run pare.mjs. */
+:root {
+  --bg: #f8f7f4;
+  --bg-surface: #ffffff;
+  --bg-tile: rgba(255,255,255,0.55);
+  --border: rgba(255,255,255,0.88);
+  --border-hover: rgba(37,99,235,0.2);
+  --text: #18181b;
+  --text-muted: #71717a;
+  --text-faint: #a1a1aa;
+  --accent: #2563eb;
+  --success: #84cc16;
+  --warning: #f97316;
+  --danger: #f43f5e;
+  --info: #06b6d4;
+  --cyan: #06b6d4;
+  --magenta: #d946ef;
+  --font-display: 'Outfit', sans-serif;
+  --font-mono: 'JetBrains Mono', monospace;
+  --font-weight-body: 400;
+  --radius-xs: 10px;
+  --scanlines: none;
+  --grid-bg: none;
+  --grid-size: 0px;
+  --vignette: none;
+}
+/* /trp-themes */
   * { margin: 0; padding: 0; box-sizing: border-box; }
 
   body {
@@ -425,15 +453,6 @@
   }
 
   /* ── Theme Label ── */
-  .theme-label {
-    position: fixed; bottom: 24px; left: 50%; transform: translateX(-50%);
-    z-index: 10000; font-family: var(--font-display); font-size: 12px;
-    letter-spacing: 3px; text-transform: uppercase; color: var(--accent);
-    background: color-mix(in srgb, var(--bg) 92%, transparent); backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px);
-    border: 1px solid var(--border); padding: 10px 24px; border-radius: 100px;
-    transition: all 0.5s; pointer-events: none; opacity: 0;
-  }
-  .theme-label.show { opacity: 1; }
 
   /* ── Settings Drawer ── */
   .settings-overlay {
